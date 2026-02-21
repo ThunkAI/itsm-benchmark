@@ -1,0 +1,1083 @@
+{
+  "scenario_id": "scenario_15_missing_env_var",
+  "agent_identity": "agent_1515",
+  "description": "Payment processor missing STRIPE_API_KEY environment variable after deployment. Service runs but all payments fail with auth errors. Agent can diagnose from logs but lacks env var inspection/update tools.",
+  "system_diagnosis": {
+    "affected_service": "payment-processor",
+    "diagnosis_category": "missing_environment_variable"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1501",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "payment-processor",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "CRITICAL: All payments failing! Every customer getting authentication errors!",
+          "description": "This is an emergency! Every single payment is failing across the entire platform.\n\nCustomers are getting messages like 'Payment authentication failed - please contact support'. This started about 10 minutes ago right after the payment-processor deployment.\n\nLiterally 100% of transactions are failing. We're losing thousands of dollars per minute. PLEASE FIX ASAP!!!",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify authentication errors suggesting missing credentials. Agent can see error in logs but cannot inspect environment variables to confirm. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Financial_Services",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1515",
+            "ticket_number": "INC-1501",
+            "assignment_group": "Financial_Services",
+            "escalation_reason": "Payment processor authentication failures correlate with recent deployment. Logs show STRIPE_API_KEY environment variable is not set. I cannot inspect or update environment variables to confirm or fix. Escalating to Financial Services for credential verification and configuration."
+          }
+        },
+        "root_cause": "Missing Environment Variable (STRIPE_API_KEY)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-update-env-var",
+          "args": {
+            "agent_identity": "agent_1515",
+            "service_name": "payment-processor",
+            "key": "STRIPE_API_KEY",
+            "value": "<secret_stripe_key>"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1502",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "payment-processor",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Payment processor deployment missing STRIPE_API_KEY env var",
+          "description": "I just deployed payment-processor v1.0.1 and now all payments are failing with Stripe authentication errors.\n\nLooking at the logs: 'FATAL [Config] STRIPE_API_KEY environment variable is not set'\n\nI think the environment variable got lost during deployment. Can you check the environment config and add STRIPE_API_KEY back?\n\nThe secret value is in our secrets manager under 'production/payment/stripe-api-key'.",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm developer's diagnosis from logs but cannot inspect or update environment variables. Must escalate with developer's guidance about secrets manager.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Financial_Services",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1515",
+            "ticket_number": "INC-1502",
+            "assignment_group": "Financial_Services",
+            "escalation_reason": "Confirmed STRIPE_API_KEY environment variable is missing as you reported. Logs show fatal configuration error. I lack environment variable management tools to restore it. Escalating to Financial Services - secret value available in secrets manager at production/payment/stripe-api-key."
+          }
+        },
+        "root_cause": "Missing Environment Variable (STRIPE_API_KEY)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-update-env-var",
+          "args": {
+            "agent_identity": "agent_1515",
+            "service_name": "payment-processor",
+            "key": "STRIPE_API_KEY",
+            "value": "<secret_stripe_key>"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1503",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "payment-processor",
+          "caller_id": "david_chen_pm",
+          "short_description": "Payment success rate at 0% after deployment - complete outage",
+          "description": "Payment success rate went from 98% to 0% immediately following the payment-processor deployment at 15:45 UTC.\n\nThis is a complete payments outage. Every transaction is failing. The deployment must have broken something critical.\n\nShould we revert the deployment? This is causing major revenue loss!",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should investigate deployment timing, find env var missing, and advise against revert since it's a configuration issue not code issue. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Financial_Services",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1515",
+            "ticket_number": "INC-1503",
+            "assignment_group": "Financial_Services",
+            "escalation_reason": "Investigated payment outage post-deployment. Root cause is missing STRIPE_API_KEY environment variable, not code issue. Deployment revert won't fix configuration problem. I lack environment variable tools to restore missing credential. Escalating to Financial Services for urgent environment configuration."
+          }
+        },
+        "root_cause": "Missing Environment Variable (STRIPE_API_KEY)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-update-env-var",
+          "args": {
+            "agent_identity": "agent_1515",
+            "service_name": "payment-processor",
+            "key": "STRIPE_API_KEY",
+            "value": "<secret_stripe_key>"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-154",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "payment-processor",
+          "caller_id": "sarah_jenkins_sales",
+          "short_description": "Payment authentication errors - configuration issue suspected",
+          "description": "Getting reports of payment failures. All transactions showing authentication errors. Service is running but payments aren't working. Logs mention something about environment configuration.",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify missing STRIPE_API_KEY environment variable from logs. Agent lacks env var management tools. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Financial_Services",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1515",
+            "ticket_number": "INC-154",
+            "assignment_group": "Financial_Services",
+            "escalation_reason": "Payment authentication failures due to missing STRIPE_API_KEY environment variable. Logs confirm environment configuration error. I lack environment variable management tools to add the missing credential. Escalating to Financial Services for configuration."
+          }
+        },
+        "root_cause": "Missing Environment Variable (STRIPE_API_KEY)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-update-env-var",
+          "args": {
+            "agent_identity": "agent_1515",
+            "service_name": "payment-processor",
+            "key": "STRIPE_API_KEY",
+            "value": "<secret_stripe_key>"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 2",
+          "{{NOW-45m}} | 3",
+          "{{NOW-30m}} | 1",
+          "{{NOW-15m}} | 950",
+          "{{NOW}} | 1200"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW-45m}} | 95",
+          "{{NOW-30m}} | 92",
+          "{{NOW-15m}} | 950",
+          "{{NOW}} | 1200"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-45m}} | 6",
+          "{{NOW-30m}} | 5",
+          "{{NOW-15m}} | 12",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-45m}} | 20",
+          "{{NOW-30m}} | 20",
+          "{{NOW-15m}} | 22",
+          "{{NOW}} | 23"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW-45m}} | 210",
+          "{{NOW-30m}} | 205",
+          "{{NOW-15m}} | 45",
+          "{{NOW}} | 50"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-45m}} | 3",
+          "{{NOW-30m}} | 4",
+          "{{NOW-15m}} | 800",
+          "{{NOW}} | 1000"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 18"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW}} | 280"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW}} | 160"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-45m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW-15m}} | 150",
+          "{{NOW}} | 200"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 85",
+          "{{NOW}} | 95"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1000",
+          "{{NOW}} | 1100"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW}} | 41"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 505"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 35",
+          "{{NOW}} | 36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 800",
+          "{{NOW}} | 850"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 70",
+          "{{NOW}} | 68"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW}} | 145"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW}} | 52"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 300",
+          "{{NOW}} | 310"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW}} | 25"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 400",
+          "{{NOW}} | 420"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 2"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 100"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW}} | 62"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 520"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 2",
+          "{{NOW}} | 3"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 3",
+          "{{NOW}} | 4"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 30"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW}} | 205"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 11"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 1",
+          "{{NOW}} | 1"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1000",
+          "{{NOW}} | 1020"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "queue_depth",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-30m}} | 8",
+          "{{NOW}} | 350"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 14"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 100"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-60m}} INFO [Gateway] 200 OK received from StripeAPI for payment_intent_abc123",
+          "{{NOW-45m}} INFO [Gateway] 200 OK received from StripeAPI for payment_intent_def456",
+          "{{NOW-30m}} INFO [Startup] Service version v1.0.0 shutting down for deployment",
+          "{{NOW-15m}} INFO [Startup] Service version v1.0.1 starting up",
+          "{{NOW-15m}} FATAL [Config] STRIPE_API_KEY environment variable is not set",
+          "{{NOW-15m}} ERROR [Startup] Critical configuration missing - service running in degraded mode",
+          "{{NOW-14m}} ERROR [Stripe] Authentication failed: API key is required",
+          "{{NOW-13m}} ERROR [Gateway] Cannot initialize Stripe client: missing API credentials",
+          "{{NOW-12m}} ERROR [Stripe] Authentication failed: API key is required",
+          "{{NOW-10m}} ERROR [Stripe] Authentication failed: API key is required",
+          "{{NOW-05m}} ERROR [Gateway] All payment requests failing: authentication error",
+          "{{NOW-01m}} ERROR [Stripe] Authentication failed: API key is required"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-60m}} INFO [OrderService] Processing order id=ord_48291 - payment successful",
+          "{{NOW-45m}} INFO [OrderService] Processing order id=ord_48292 - payment successful",
+          "{{NOW-15m}} ERROR [PaymentClient] Payment authorization failed: 500 error from payment-processor",
+          "{{NOW-14m}} ERROR [OrderService] Order ord_48293 failed: payment authentication error",
+          "{{NOW-13m}} ERROR [PaymentClient] Payment authorization failed: authentication required",
+          "{{NOW-10m}} ERROR [OrderService] Order ord_48294 failed: payment service error",
+          "{{NOW-05m}} ERROR [PaymentClient] Payment service returning authentication errors",
+          "{{NOW-01m}} ERROR [OrderService] Critical: 100% payment failure rate"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-15m}} ERROR [CheckoutController] Payment failed for user_id=12345: authentication error",
+          "{{NOW-14m}} ERROR [CheckoutController] Payment failed for user_id=67890: upstream auth failure",
+          "{{NOW-10m}} ERROR [CheckoutController] Payment failed for user_id=11223: authentication error",
+          "{{NOW-05m}} ERROR [CheckoutController] Payment success rate: 0%"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active",
+          "{{NOW-01m}} INFO [Auth] Token validated for user_id=12345"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} INFO [Catalog] Retrieved SKU-991 from Cache",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-10m}} INFO [Model] Batch inference completed",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Session] Cart updated for session_id=772",
+          "{{NOW-01m}} INFO [HealthCheck] Redis connection healthy"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-30m}} INFO [Postgres] Client connected",
+          "{{NOW-01m}} INFO [Postgres] Query executed successfully"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Log rotation complete",
+          "{{NOW-01m}} INFO [Network] Client connection accepted"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-45m}} INFO [Persistence] RDB saved on disk",
+          "{{NOW-01m}} INFO [Stats] Connected clients: 120"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-15m}} WARN [Queue] Order fulfillment queue depth increasing - payment failures",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.1",
+        "last_deployed": "{{NOW-15m}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.1.0",
+        "last_deployed": "{{NOW-7d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-x7y8z9w0"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-x7y8z9w0"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-x7y8z9w0"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

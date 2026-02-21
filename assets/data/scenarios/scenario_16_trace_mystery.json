@@ -1,0 +1,966 @@
+{
+  "scenario_id": "scenario_16_trace_mystery",
+  "agent_identity": "agent_1616",
+  "description": "Frontend-storefront experiencing 2-second latency spikes but all downstream services show normal latency (<50ms). Delay in network hops between services due to service mesh misconfiguration. Without distributed tracing, agent cannot pinpoint where time is lost.",
+  "system_diagnosis": {
+    "affected_service": "frontend-storefront",
+    "diagnosis_category": "network_mesh_latency"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1601",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "david_chen_pm",
+          "short_description": "Frontend P99 latency spiked to 2+ seconds - all backends look fast",
+          "description": "Frontend P99 latency just spiked from 100ms to 2+ seconds starting at 14:20 UTC.\n\nThis is killing our conversion rate. But when I look at the backend services:\n- auth-core-service: 40ms latency (normal)\n- product-catalog-service: 35ms latency (normal)\n- cart-service: 30ms latency (normal)\n\nAll backends look fast. Where is the 2 seconds going? This doesn't make sense.",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should identify latency discrepancy - frontend reports 2000ms but downstream services total <50ms each. Suggests network/mesh issue. Agent lacks distributed tracing to pinpoint. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Platform_Infrastructure",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1616",
+            "ticket_number": "INC-1601",
+            "assignment_group": "Platform_Infrastructure",
+            "escalation_reason": "Frontend latency 2000ms but all downstream services report normal latency (<50ms each). Unaccounted time suggests network hop or service mesh latency issue. I lack distributed tracing tools to pinpoint where time is being lost in the request path. Escalating to Platform Infrastructure for network/mesh investigation."
+          }
+        },
+        "root_cause": "Service Mesh Latency (network misconfiguration between pods)",
+        "action_solution": null,
+        "final_action": null
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1602",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "Customer complaints about slow page load times",
+          "description": "We're getting multiple customer complaints about extremely slow page loads on the website. Customers are reporting the site taking 2-3 seconds to load pages.\n\nThey're frustrated and some are mentioning they'll shop elsewhere if performance doesn't improve. Can you investigate what's causing the slowness?",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should correlate customer reports with frontend latency spike. Latency mismatch between frontend and backends suggests network/mesh issue. Lacks distributed tracing. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Platform_Infrastructure",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1616",
+            "ticket_number": "INC-1602",
+            "assignment_group": "Platform_Infrastructure",
+            "escalation_reason": "Confirmed frontend-storefront latency degradation to 2000ms. All backend services operating normally with <50ms latency each. Suggests network hop or service mesh issue causing unaccounted latency. Requires distributed tracing analysis to identify where time is lost in request path. Escalating to Platform Infrastructure."
+          }
+        },
+        "root_cause": "Service Mesh Latency (network misconfiguration between pods)",
+        "action_solution": null,
+        "final_action": null
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1603",
+          "table": "incident",
+          "state": "New",
+          "severity": "3",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "samira_gupta_security",
+          "short_description": "Performance anomaly on frontend - potential security concern?",
+          "description": "I'm seeing unusual latency patterns on frontend-storefront service. Latency jumped from 100ms to over 2 seconds about an hour ago.\n\nI've checked for signs of DDoS or malicious traffic but don't see any suspicious patterns in access logs or request rates. All backend services show normal latency.\n\nCould this be a service mesh configuration change or network issue? Need to rule out security concerns.",
+          "category": "Security Investigation"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should rule out security concerns by analyzing traffic patterns and error rates. Identify latency discrepancy points to infrastructure issue not security. Must escalate for network analysis.",
+        "verification_outcome": {
+          "severity_check": "3",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Platform_Infrastructure",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1616",
+            "ticket_number": "INC-1603",
+            "assignment_group": "Platform_Infrastructure",
+            "escalation_reason": "No security indicators detected - request rates normal, no error spike, no malicious traffic patterns. Frontend latency 2000ms but backends total <50ms. Time unaccounted for suggests network/mesh latency issue rather than security concern. Requires infrastructure team investigation with distributed tracing tools."
+          }
+        },
+        "root_cause": "Service Mesh Latency (network misconfiguration between pods)",
+        "action_solution": null,
+        "final_action": null
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|100",
+          "{{NOW-30m}}|105",
+          "{{NOW-15m}}|2100",
+          "{{NOW}}|2050"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|15",
+          "{{NOW}}|16"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|40",
+          "{{NOW}}|41"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|1200",
+          "{{NOW}}|1250"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|38",
+          "{{NOW-30m}}|40",
+          "{{NOW-15m}}|42",
+          "{{NOW}}|40"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|45",
+          "{{NOW}}|46"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|55",
+          "{{NOW}}|56"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|800",
+          "{{NOW}}|820"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|33",
+          "{{NOW-30m}}|35",
+          "{{NOW-15m}}|36",
+          "{{NOW}}|35"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|21"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|35",
+          "{{NOW}}|36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|2000",
+          "{{NOW}}|2100"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|28",
+          "{{NOW-30m}}|30",
+          "{{NOW-15m}}|32",
+          "{{NOW}}|30"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|10",
+          "{{NOW}}|12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|25",
+          "{{NOW}}|28"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|600",
+          "{{NOW}}|650"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|75",
+          "{{NOW}}|72"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|60",
+          "{{NOW}}|62"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|210",
+          "{{NOW}}|205"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|500",
+          "{{NOW}}|510"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|12",
+          "{{NOW}}|15"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|45",
+          "{{NOW}}|48"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|250",
+          "{{NOW}}|240"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|100",
+          "{{NOW}}|110"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|5",
+          "{{NOW}}|5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|22"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|420",
+          "{{NOW}}|410"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|90",
+          "{{NOW}}|100"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|8",
+          "{{NOW}}|8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|31"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|350",
+          "{{NOW}}|340"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|90",
+          "{{NOW}}|100"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|32"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|60",
+          "{{NOW}}|62"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|5",
+          "{{NOW}}|5"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|1500",
+          "{{NOW}}|1600"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|45",
+          "{{NOW}}|48"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|22"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|50",
+          "{{NOW}}|52"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|3",
+          "{{NOW}}|4"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|2000",
+          "{{NOW}}|2100"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|50",
+          "{{NOW}}|52"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|10",
+          "{{NOW}}|12"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|40",
+          "{{NOW}}|42"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|1",
+          "{{NOW}}|1"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|5000",
+          "{{NOW}}|5200"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|15",
+          "{{NOW}}|18"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|32"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|5",
+          "{{NOW}}|6"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|100",
+          "{{NOW}}|110"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "queue_depth",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-30m}} INFO [HTTP] Request completed in 105ms (auth: 38ms, catalog: 33ms, cart: 28ms)",
+          "{{NOW-15m}} WARN [HTTP] Request completed in 2100ms (external calls: auth 40ms, catalog 35ms, cart 30ms) - unaccounted time: 1995ms",
+          "{{NOW-10m}} WARN [HTTP] Request completed in 2050ms (external calls: auth 42ms, catalog 36ms, cart 32ms) - unaccounted time: 1940ms",
+          "{{NOW-05m}} WARN [Performance] P99 latency exceeding threshold: 2100ms",
+          "{{NOW-01m}} WARN [HTTP] Request completed in 2080ms (external calls: auth 40ms, catalog 35ms, cart 30ms) - unaccounted time: 1975ms"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-15m}} INFO [TokenValidator] Session validated for user_8821 in 40ms",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active - latency normal"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} INFO [Catalog] Retrieved SKU-991 from Cache in 35ms",
+          "{{NOW-02m}} INFO [HealthCheck] Status: Active - latency normal"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Session] Cart updated for session_id=772 in 30ms",
+          "{{NOW-03m}} INFO [HealthCheck] Redis connection healthy - latency normal"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-10m}} INFO [Model] Batch inference completed in 180ms",
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [OrderHandler] Order #99231 created successfully.",
+          "{{NOW-02m}} INFO [OrderHandler] Order #99232 created successfully."
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [Gateway] Request sent to StripeAPI",
+          "{{NOW-05m}} INFO [Gateway] 200 OK received from StripeAPI"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-04m}} INFO [Logistics] Label generated for Order #99231",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-60m}} INFO [System] Checkpoint completed",
+          "{{NOW-01m}} INFO [Metrics] Active connections: 45/100"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Log rotation complete",
+          "{{NOW-01m}} INFO [Network] Client connection accepted from 10.0.1.5"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-45m}} INFO [Persistence] RDB saved on disk",
+          "{{NOW-01m}} INFO [Stats] Connected clients: 120"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-01m}} INFO [Queue] 'orders' queue depth: 0"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0-stable",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-16"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-16"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-16"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-16"
+      }
+    ]
+  }
+}

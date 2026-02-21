@@ -1,0 +1,1167 @@
+{
+  "scenario_id": "scenario_02_cpu_choke",
+  "agent_identity": "agent_303",
+  "description": "High traffic causes CPU saturation in the Recommendation API, leading to site-wide latency. Requires scaling the service.",
+  "system_diagnosis": {
+    "affected_service": "recommendation-api",
+    "diagnosis_category": "cpu_saturation"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-6021",
+          "table": "incident",
+          "state": "New",
+          "severity": "3",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "david_chen_pm",
+          "short_description": "Regression in P99 Latency on PDP (Product Detail Page)",
+          "description": "I'm looking at the midday dashboards and I see a 15% bump in latency on the `frontend-storefront` starting around 2:00 PM UTC.\n\nIt seems correlated with the rollout of the new 'Black Friday' recommendation widget on the PDP. Can we investigate if `recommendation-api` is throttling? See the Grafana link attached.\n\nThis is hurting our conversion metrics.",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that 'recommendation-api' is running at near 100% CPU utilization, causing high latency upstream in the frontend. The correct technical fix is to scale the service. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "3",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "root_cause": "CPU Saturation in recommendation-api",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_303",
+            "ticket_number": "INC-6021",
+            "resolution_summary": "Identified CPU saturation on recommendation-api (99% utilization) causing upstream latency. Scaled service to 4 replicas to handle increased load from the new widget. Latency metrics are stabilizing."
+          }
+        },
+        "action_solution": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        },
+        "final_action": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-6022",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "sarah_jenkins_sales",
+          "short_description": "URGENT: Homepage is crawling - can't load products",
+          "description": "I am trying to show the Black Friday collection to a VIP client and the homepage takes 10 seconds to load! The 'You might like' section is just a spinning wheel.\n\nThis is unacceptable. Is the wifi down or is the server broken? Fix it NOW before I lose this deal.",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that the slowness described by the user is caused by 'recommendation-api' CPU saturation (99%), which is delaying the frontend load. The correct technical fix is to scale the service. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "root_cause": "CPU Saturation in recommendation-api",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_303",
+            "ticket_number": "INC-6022",
+            "resolution_summary": "Investigated report of slowness. Found recommendation-api at 99% CPU utilization, causing bottlenecks on the homepage. Scaled service to 4 replicas. Latency has returned to normal levels."
+          }
+        },
+        "action_solution": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        },
+        "final_action": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-6023",
+          "table": "incident",
+          "state": "New",
+          "severity": "3",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "Multiple reports of timeouts on Homepage/PDP",
+          "description": "We are getting a spike in tickets (20+) in the last 15 mins. Users are reporting that the homepage loads partially but then spins or errors out with a 'Network Error'.\n\nSeems to be affecting the 'Recommended for you' section specifically. Is the Recommendation API healthy?",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the support lead's hypothesis that 'recommendation-api' is the bottleneck. Metrics show it is CPU saturated. The correct technical fix is to scale the service. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "3",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "root_cause": "CPU Saturation in recommendation-api",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_303",
+            "ticket_number": "INC-6023",
+            "resolution_summary": "Confirmed recommendation-api was the bottleneck (CPU at 99%). Scaled service to 4 replicas to handle current traffic load. User timeouts should cease immediately."
+          }
+        },
+        "action_solution": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        },
+        "final_action": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-6024",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "recommendation-api",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Rec API CPU pegged at 100% - inference batch too large?",
+          "description": "I'm seeing the recommendation-api pods all maxed out at 100% CPU. Looking at the logs, the new Black Friday widget is calling the inference endpoint with batch sizes of 50 products per request.\n\nWe need to either optimize the batch processing or scale horizontally. Can someone with prod access scale us to 4 replicas?",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the developer's diagnosis and scale the service as requested.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "root_cause": "CPU Saturation in recommendation-api",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_303",
+            "ticket_number": "INC-6024",
+            "resolution_summary": "Confirmed CPU saturation (100%) on recommendation-api. Scaled to 4 replicas as requested. Batch processing load now distributed across additional pods."
+          }
+        },
+        "action_solution": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        },
+        "final_action": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-6025",
+          "table": "incident",
+          "state": "New",
+          "severity": "3",
+          "configuration_item": "recommendation-api",
+          "caller_id": "samira_gupta_security",
+          "short_description": "Monitoring alert: Recommendation API response time degraded",
+          "description": "Auto-generated alert from APM:\n\nService: recommendation-api\nMetric: p95_latency\nThreshold: 200ms\nCurrent: 850ms\nDuration: 12 minutes\n\nCPU utilization shows 99% saturation. Recommend scaling to handle load.",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the monitoring alert and scale the service to resolve the performance degradation.",
+        "verification_outcome": {
+          "severity_check": "3",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "root_cause": "CPU Saturation in recommendation-api",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_303",
+            "ticket_number": "INC-6025",
+            "resolution_summary": "Validated APM alert. CPU saturation (99%) confirmed on recommendation-api. Scaled to 4 replicas. P95 latency returning to baseline."
+          }
+        },
+        "action_solution": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        },
+        "final_action": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-026",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "recommendation-api",
+          "caller_id": "sarah_jenkins_sales",
+          "short_description": "Recommendation API CPU at 99% - increased traffic load",
+          "description": "Recommendation API showing 99% CPU usage. Traffic has increased significantly since the Black Friday widget launch. Performance severely degraded with high response times.",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify CPU saturation on recommendation-api from increased traffic and scale the service to handle the load.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_303",
+            "ticket_number": "INC-026",
+            "resolution_summary": "Identified CPU saturation on recommendation-api (99% utilization) from increased Black Friday traffic. Scaled service to 4 replicas to distribute load. Response times returning to normal."
+          }
+        },
+        "root_cause": "CPU Saturation in recommendation-api",
+        "action_solution": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        },
+        "final_action": {
+          "tool": "service-scale",
+          "args": {
+            "agent_identity": "agent_303",
+            "service_name": "recommendation-api",
+            "replica_count": 4
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-30m}} | 15",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW-30m}} | 42",
+          "{{NOW}} | 45"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 85",
+          "{{NOW-30m}} | 500",
+          "{{NOW-15m}} | 1200",
+          "{{NOW}} | 1800"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 2"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1200",
+          "{{NOW}} | 1400"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW-30m}} | 85",
+          "{{NOW-15m}} | 95",
+          "{{NOW}} | 99"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW-30m}} | 55",
+          "{{NOW}} | 60"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW-30m}} | 800",
+          "{{NOW-15m}} | 1500",
+          "{{NOW}} | 2200"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW-30m}} | 800",
+          "{{NOW}} | 1100"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 55",
+          "{{NOW}} | 56"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 800",
+          "{{NOW}} | 820"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 35",
+          "{{NOW}} | 36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 18"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 2000",
+          "{{NOW}} | 2200"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 11"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW}} | 26"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 600",
+          "{{NOW}} | 620"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW}} | 255"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 105"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 420",
+          "{{NOW}} | 415"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 95"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 30"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 350",
+          "{{NOW}} | 345"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 95"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 31"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW}} | 61"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 6"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1500",
+          "{{NOW}} | 1550"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 25"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW}} | 52"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 3",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 2000",
+          "{{NOW}} | 2300"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 11"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW}} | 41"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 1",
+          "{{NOW}} | 1"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5000",
+          "{{NOW}} | 5300"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 31"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 105"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-30m}} INFO [Model] Loading new weights for 'black-friday-v2'",
+          "{{NOW-20m}} WARN [System] CPU usage exceeded 85% - auto-scaling not configured",
+          "{{NOW-10m}} WARN [Worker] Thread starvation detected. Queue depth: 450",
+          "{{NOW-05m}} WARN [System] CPU usage 99%. Throttling incoming requests."
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-15m}} WARN [AsyncClient] Response time > 1000ms from recommendation-api",
+          "{{NOW-05m}} ERROR [AsyncClient] Timeout waiting for recommendation-api (2000ms)",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active (Degraded Performance)"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-20m}} INFO [TokenValidator] Session validated for user_5521",
+          "{{NOW-01m}} INFO [HealthCheck] DB Connection: Active"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-15m}} INFO [Catalog] Retrieved SKU-101 from Cache",
+          "{{NOW-02m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-10m}} INFO [Session] Cart item added session_id=881",
+          "{{NOW-01m}} INFO [HealthCheck] Redis connection healthy"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [OrderHandler] Order #99500 created.",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [Gateway] Transaction 200 OK",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-10m}} INFO [Logistics] Label request received",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-05m}} INFO [Metrics] Active connections: 40/100",
+          "{{NOW-01m}} INFO [Vacuum] Auto-vacuum completed"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-20m}} INFO [Query] High read volume on collection 'products'",
+          "{{NOW-01m}} INFO [Network] Connection accepted"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-05m}} INFO [Stats] Connected clients: 115",
+          "{{NOW-01m}} INFO [Persistence] AOF rewrite scheduled"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-10m}} INFO [Queue] 'orders' queue depth: 2",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Degraded",
+        "replica_count": 2,
+        "dependencies": [
+          "inventory-db"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0-stable",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated. Replica count updated.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "scale-job-m3n4o5p6"
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-q7r8s9t0"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for * - rolling back to previous version",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-u1v2w3x4"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1048 @@
+{
+  "scenario_id": "scenario_21_circuit_reset",
+  "agent_identity": "agent_2121",
+  "description": "Circuit breaker from order-processor to payment-processor stuck HALF_OPEN after brief outage. Only allowing 1% traffic. Payment service recovered but circuit won't auto-close. Agent lacks service-reset-circuit-breaker tool.",
+  "system_diagnosis": {
+    "affected_service": "order-processor",
+    "diagnosis_category": "circuit_breaker_state"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-2101",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "order-processor",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "CRITICAL: 99% of orders failing! Only 1-2 orders per minute succeeding!",
+          "description": "This is an emergency! Almost every order is failing right now.\n\nWe're only seeing 1 or 2 successful orders per minute when we should have 100+. Everything else is getting rejected with error messages about 'service unavailable'.\n\nThis started about 10 minutes ago. We're losing massive amounts of revenue. PLEASE FIX IMMEDIATELY!!!",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify circuit breaker stuck in HALF_OPEN state limiting traffic to 1%. Payment service is healthy but circuit won't close. Agent lacks circuit reset tool. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_2121",
+            "ticket_number": "INC-2101",
+            "assignment_group": "Checkout_Engineering",
+            "escalation_reason": "Identified circuit breaker from order-processor to payment-processor stuck in HALF_OPEN state, allowing only 1% of traffic through. Payment-processor is fully recovered and healthy, but circuit breaker won't automatically close to full traffic. I lack circuit breaker management tools (service-reset-circuit-breaker) to manually close it. Escalating to Checkout Engineering for manual circuit reset."
+          }
+        },
+        "root_cause": "Circuit Breaker Stuck HALF_OPEN",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-reset-circuit-breaker",
+          "args": {
+            "agent_identity": "agent_2121",
+            "service_name": "order-processor",
+            "target_service": "payment-processor"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-2102",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "order-processor",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Circuit breaker to payment service stuck HALF_OPEN - needs manual reset",
+          "description": "The circuit breaker from order-processor to payment-processor is stuck in the HALF_OPEN state.\n\nIt's been stuck there for 10 minutes, only letting through 1% of requests for testing. The payment service is completely healthy now and ready for full traffic.\n\nLogs show: 'Circuit breaker to payment-processor is HALF_OPEN - only allowing 1% test traffic'\n\nCan you manually reset the circuit breaker to fully close it? The payment service had a brief issue earlier but it's been recovered for 15 minutes.",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm developer's diagnosis that circuit is stuck HALF_OPEN and payment service is healthy. Agent lacks circuit reset capability. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_2121",
+            "ticket_number": "INC-2102",
+            "assignment_group": "Checkout_Engineering",
+            "escalation_reason": "Confirmed circuit breaker stuck in HALF_OPEN state as you reported. Payment-processor is healthy and ready for full traffic, but circuit breaker won't auto-close. I lack circuit breaker reset capabilities to manually close it. Escalating to Checkout Engineering for immediate manual circuit reset to restore full order processing."
+          }
+        },
+        "root_cause": "Circuit Breaker Stuck HALF_OPEN",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-reset-circuit-breaker",
+          "args": {
+            "agent_identity": "agent_2121",
+            "service_name": "order-processor",
+            "target_service": "payment-processor"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-213",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "order-processor",
+          "caller_id": "samira_gupta_security",
+          "short_description": "Circuit breaker stuck HALF_OPEN - orders failing",
+          "description": "Circuit breaker stuck in HALF_OPEN state limiting traffic. Most orders failing. Downstream service recovered but circuit not auto-resetting to full traffic.",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify circuit breaker stuck HALF_OPEN and that payment service is healthy. Agent lacks circuit reset tool. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_2121",
+            "ticket_number": "INC-213",
+            "assignment_group": "Checkout_Engineering",
+            "escalation_reason": "Circuit breaker from order-processor to payment-processor stuck in HALF_OPEN state. Payment service is healthy but circuit won't auto-close to full traffic. I lack circuit breaker reset tools (service-reset-circuit-breaker). Escalating to Checkout Engineering for manual circuit reset."
+          }
+        },
+        "root_cause": "Circuit Breaker Stuck HALF_OPEN",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-reset-circuit-breaker",
+          "args": {
+            "agent_identity": "agent_2121",
+            "service_name": "order-processor",
+            "target_service": "payment-processor"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-45m}} | 8",
+          "{{NOW-30m}} | 180",
+          "{{NOW-15m}} | 950",
+          "{{NOW}} | 990"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-45m}} | 16",
+          "{{NOW-30m}} | 18",
+          "{{NOW-15m}} | 12",
+          "{{NOW}} | 10"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW-45m}} | 46",
+          "{{NOW-30m}} | 47",
+          "{{NOW-15m}} | 46",
+          "{{NOW}} | 45"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW-45m}} | 260",
+          "{{NOW-30m}} | 280",
+          "{{NOW-15m}} | 200",
+          "{{NOW}} | 180"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW-45m}} | 155",
+          "{{NOW-30m}} | 160",
+          "{{NOW-15m}} | 1000",
+          "{{NOW}} | 1000"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW-45m}} | 95",
+          "{{NOW-30m}} | 5",
+          "{{NOW-15m}} | 10",
+          "{{NOW}} | 10"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-45m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW-15m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-45m}} | 6",
+          "{{NOW-30m}} | 8",
+          "{{NOW-15m}} | 5",
+          "{{NOW}} | 4"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-45m}} | 20",
+          "{{NOW-30m}} | 21",
+          "{{NOW-15m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW-45m}} | 210",
+          "{{NOW-30m}} | 220",
+          "{{NOW-15m}} | 200",
+          "{{NOW}} | 195"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-45m}} | 0",
+          "{{NOW-30m}} | 50",
+          "{{NOW-15m}} | 200",
+          "{{NOW}} | 250"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 85",
+          "{{NOW}} | 95"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1000",
+          "{{NOW}} | 1100"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW}} | 41"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 505"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 35",
+          "{{NOW}} | 36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 800",
+          "{{NOW}} | 850"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 70",
+          "{{NOW}} | 68"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW}} | 145"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW}} | 52"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 300",
+          "{{NOW}} | 310"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW}} | 25"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 400",
+          "{{NOW}} | 420"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 2"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 100"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW}} | 62"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 520"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 2",
+          "{{NOW}} | 3"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 3",
+          "{{NOW}} | 4"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 30"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW}} | 205"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 11"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 1",
+          "{{NOW}} | 1"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1000",
+          "{{NOW}} | 1020"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "queue_depth",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-30m}} | 80",
+          "{{NOW}} | 950"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 14"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 100"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-60m}} INFO [OrderService] Processing order id=ord_48291",
+          "{{NOW-45m}} INFO [OrderService] Processing order id=ord_48292",
+          "{{NOW-35m}} INFO [OrderService] Processing order id=ord_48293",
+          "{{NOW-30m}} ERROR [PaymentClient] Payment service timeout - circuit breaker tripped",
+          "{{NOW-30m}} WARN [Circuit] Circuit breaker to payment-processor is now OPEN",
+          "{{NOW-25m}} INFO [Circuit] Circuit breaker attempting recovery - entering HALF_OPEN state",
+          "{{NOW-25m}} WARN [Circuit] Circuit breaker to payment-processor is HALF_OPEN - only allowing 1% test traffic",
+          "{{NOW-20m}} INFO [Circuit] Test request to payment-processor succeeded",
+          "{{NOW-20m}} WARN [Circuit] Circuit breaker remains HALF_OPEN - waiting for more successful tests",
+          "{{NOW-15m}} WARN [Circuit] Circuit breaker to payment-processor is HALF_OPEN - only allowing 1% test traffic",
+          "{{NOW-10m}} ERROR [OrderService] 99% of requests rejected by circuit breaker",
+          "{{NOW-05m}} WARN [Circuit] Circuit breaker stuck in HALF_OPEN state for 10 minutes",
+          "{{NOW-01m}} ERROR [OrderService] Critical: Circuit breaker blocking 99% of traffic"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-60m}} INFO [Gateway] 200 OK received from StripeAPI",
+          "{{NOW-45m}} INFO [Gateway] 200 OK received from StripeAPI",
+          "{{NOW-35m}} ERROR [Gateway] Timeout calling StripeAPI - network issue",
+          "{{NOW-30m}} WARN [HealthCheck] Brief connectivity issue to external payment gateway",
+          "{{NOW-25m}} INFO [Gateway] Connectivity restored - 200 OK from StripeAPI",
+          "{{NOW-20m}} INFO [HealthCheck] Status: Active - all systems normal",
+          "{{NOW-15m}} INFO [HealthCheck] Status: Active - ready for full traffic",
+          "{{NOW-10m}} INFO [HealthCheck] Status: Active - minimal traffic received",
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active - ready for full load",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-30m}} ERROR [CheckoutController] Payment failed for user_id=12345: service unavailable",
+          "{{NOW-25m}} ERROR [CheckoutController] Payment failed for user_id=67890: circuit breaker open",
+          "{{NOW-20m}} ERROR [CheckoutController] Payment failed for user_id=11223: circuit breaker blocking",
+          "{{NOW-15m}} ERROR [CheckoutController] Order completion rate: 1%",
+          "{{NOW-05m}} ERROR [CheckoutController] Mass order failures due to payment rejection"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active",
+          "{{NOW-01m}} INFO [Auth] Token validated for user_id=12345"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} INFO [Catalog] Retrieved SKU-991 from Cache",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-10m}} INFO [Model] Batch inference completed",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Session] Cart updated for session_id=772",
+          "{{NOW-01m}} INFO [HealthCheck] Redis connection healthy"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-30m}} INFO [Postgres] Client connected",
+          "{{NOW-01m}} INFO [Postgres] Query executed successfully"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Log rotation complete",
+          "{{NOW-01m}} INFO [Network] Client connection accepted"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-45m}} INFO [Persistence] RDB saved on disk",
+          "{{NOW-01m}} INFO [Stats] Connected clients: 120"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-25m}} WARN [Queue] Order fulfillment queue depth increasing rapidly",
+          "{{NOW-15m}} ERROR [Queue] Queue depth critical - orders backing up",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "order-processor",
+        "version": "v6.1.0",
+        "last_deployed": "{{NOW-7d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-x7y8z9w0"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-x7y8z9w0"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-x7y8z9w0"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

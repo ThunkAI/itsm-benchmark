@@ -1,0 +1,1024 @@
+{
+  "scenario_id": "scenario_23_redis_crash",
+  "agent_identity": "agent_2323",
+  "description": "Redis cache process crashed due to memory leak (OOMKilled). Agent must diagnose the memory leak and restart the redis-cache service to clear memory and restore cache functionality.",
+  "system_diagnosis": {
+    "affected_service": "redis-cache",
+    "diagnosis_category": "memory_leak"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-2301",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "product-catalog-service",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "Product pages loading very slowly - customers complaining",
+          "description": "We're getting lots of complaints that product pages are taking 10+ seconds to load. Normally they're instant.\n\nThis started about 5 minutes ago. Can you check the product catalog service?",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that redis-cache crashed, causing product-catalog-service to bypass cache and query inventory-db directly, resulting in slow page loads. Fix by restarting redis-cache.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Database_Administration",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_2323",
+            "ticket_number": "INC-2301",
+            "resolution_summary": "Product catalog slowness caused by redis-cache service crash. Cache was OOMKilled, forcing direct database queries. Restarted redis-cache service. Product pages now loading at normal speed with cache restored."
+          }
+        },
+        "root_cause": "Memory Leak in redis-cache (OOMKilled)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-2302",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "cart-service",
+          "caller_id": "david_chen_pm",
+          "short_description": "Shopping cart not saving - customer abandonment spike",
+          "description": "Cart abandonment rate just jumped from 20% to 95% in the last 5 minutes.\n\nCustomers are adding items to cart but they're not persisting. When they refresh or navigate, cart is empty.\n\nThis is a revenue-critical issue!",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that cart-service depends on redis-cache for session storage. Redis crash means carts cannot be saved. Restarting redis-cache fixes the issue.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Database_Administration",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_2323",
+            "ticket_number": "INC-2302",
+            "resolution_summary": "Cart persistence failure caused by redis-cache crash. Cart-service requires Redis for session storage. Restarted redis-cache service. Shopping cart functionality fully restored."
+          }
+        },
+        "root_cause": "Memory Leak in redis-cache (OOMKilled)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-2303",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "redis-cache",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Redis pod OOMKilled - needs restart",
+          "description": "Just got paged - redis-cache pod was OOMKilled about 5 minutes ago and hasn't recovered.\n\nSeeing connection refused errors from services trying to reach Redis. Can you restart the redis-cache service?",
+          "category": "Infrastructure"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the developer's diagnosis and restart redis-cache as requested.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Database_Administration",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_2323",
+            "ticket_number": "INC-2303",
+            "resolution_summary": "Confirmed redis-cache OOMKilled. Restarted redis-cache service. Cache is now operational and accepting connections."
+          }
+        },
+        "root_cause": "Memory Leak in redis-cache (OOMKilled)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-234",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "redis-cache",
+          "caller_id": "sarah_jenkins_sales",
+          "short_description": "Redis cache service unavailable",
+          "description": "Redis cache service crashed unexpectedly. Services dependent on cache are experiencing degraded performance with cache misses.",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should restart redis-cache to restore caching.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Platform_Infrastructure",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_2323",
+            "ticket_number": "INC-234",
+            "resolution_summary": "Identified redis-cache service crash. Restarted service. Cache layer operational and application performance restored."
+          }
+        },
+        "root_cause": "Memory Leak in redis-cache (OOMKilled)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_2323",
+            "service_name": "redis-cache"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW-30m}} | 52",
+          "{{NOW-10m}} | 98",
+          "{{NOW-5m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 65",
+          "{{NOW-30m}} | 82",
+          "{{NOW-10m}} | 99",
+          "{{NOW-5m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5000",
+          "{{NOW-30m}} | 5200",
+          "{{NOW-10m}} | 4800",
+          "{{NOW-5m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW-10m}} | 0",
+          "{{NOW-5m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-30m}} | 18",
+          "{{NOW-5m}} | 8500",
+          "{{NOW}} | 9200"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-30m}} | 22",
+          "{{NOW-5m}} | 35",
+          "{{NOW}} | 38"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW}} | 42"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-5m}} | 5",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW-5m}} | 450",
+          "{{NOW}} | 890"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 12",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW-5m}} | 150",
+          "{{NOW}} | 180"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW-30m}} | 220",
+          "{{NOW-5m}} | 8500",
+          "{{NOW}} | 9000"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-5m}} | 75",
+          "{{NOW}} | 78"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-5m}} | 85",
+          "{{NOW}} | 90"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW-5m}} | 8800",
+          "{{NOW}} | 9500"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW}} | 62"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1500",
+          "{{NOW}} | 1600"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 18"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 6"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 110"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "queue_depth",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 55",
+          "{{NOW}} | 56"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 800",
+          "{{NOW}} | 820"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 75",
+          "{{NOW}} | 72"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW}} | 62"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 210",
+          "{{NOW}} | 205"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 510"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 12",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW}} | 240"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 110"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 420",
+          "{{NOW}} | 410"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 100"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 31"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 350",
+          "{{NOW}} | 340"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 100"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-10m}} WARN [Memory] Memory usage at 99% of max_memory",
+          "{{NOW-6m}} ERROR [System] Out of memory - attempting graceful shutdown",
+          "{{NOW-5m}} FATAL [System] OOMKilled by Kubernetes - pod terminated",
+          "{{NOW-5m}} INFO [System] Pod restart initiated",
+          "{{NOW-5m}} ERROR [System] CrashLoopBackOff - waiting for manual intervention"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-60m}} INFO [Cache] Cache hit ratio: 98%",
+          "{{NOW-5m}} ERROR [Cache] Failed to connect to redis-cache: connection refused",
+          "{{NOW-5m}} WARN [Cache] Cache unavailable - falling back to direct database queries",
+          "{{NOW-4m}} ERROR [Cache] Redis connection timeout",
+          "{{NOW-2m}} WARN [Performance] Query latency degraded: 8.5s average (normal: 15ms)",
+          "{{NOW-1m}} ERROR [Cache] Still unable to reach redis-cache"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-60m}} INFO [Session] Cart updated for session_id=12345",
+          "{{NOW-5m}} ERROR [Redis] Connection to redis-cache failed: ECONNREFUSED",
+          "{{NOW-4m}} ERROR [Session] Unable to persist cart session - Redis unavailable",
+          "{{NOW-3m}} ERROR [Redis] Connection pool exhausted - all Redis connections failing",
+          "{{NOW-1m}} ERROR [Session] Cart save failed for session_id=67890"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-60m}} INFO [Query] Normal query load: 200 queries/min",
+          "{{NOW-5m}} WARN [Performance] Query load spike: 8500 queries/min (40x normal)",
+          "{{NOW-3m}} WARN [CPU] CPU utilization high: 75% (normal: 15%)",
+          "{{NOW-1m}} WARN [Performance] Slow query detected: product lookup taking 90ms"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-5m}} WARN [HTTP] Product page response time degraded: 8.8s",
+          "{{NOW-3m}} ERROR [Timeout] Request to product-catalog-service timed out after 10s",
+          "{{NOW-1m}} WARN [Performance] P99 latency: 9500ms (normal: 100ms)"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-10m}} INFO [Auth] Token validated for user_id=5521",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-10m}} INFO [Metrics] Active connections: 45/100",
+          "{{NOW-01m}} INFO [System] Normal operations"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-01m}} INFO [Queue] 'orders' queue depth: 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-10m}} INFO [Model] Batch inference completed in 180ms",
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [OrderHandler] Order #99231 created successfully.",
+          "{{NOW-05m}} INFO [PaymentClient] Charge authorized: $120.50 (Stripe)",
+          "{{NOW-02m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [Gateway] Request sent to StripeAPI",
+          "{{NOW-05m}} INFO [Gateway] 200 OK received from StripeAPI",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-04m}} INFO [Logistics] Label generated for Order #99231",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Error",
+        "dependencies": [],
+        "replica_count": 1
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Degraded",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Degraded",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "redis-cache",
+        "status": "success",
+        "message": "Service redis-cache restart initiated. Cache will be operational in 30 seconds.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "restart-job-redis-recovery"
+      },
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-x7y8z9w0"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-x7y8z9w0"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-x7y8z9w0"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

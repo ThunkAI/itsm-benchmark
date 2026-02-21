@@ -1,0 +1,983 @@
+{
+  "scenario_id": "scenario_17_runaway_service",
+  "agent_identity": "agent_1717",
+  "description": "Recommendation-api has critical bug corrupting data in inventory-db. Service needs to be completely stopped (not restarted) until bug is fixed. Restarting would resume corruption. Agent lacks service-set-power-state tool.",
+  "system_diagnosis": {
+    "affected_service": "recommendation-api",
+    "diagnosis_category": "data_corruption"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1701",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "recommendation-api",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "CRITICAL: Recommendation service corrupting inventory database - STOP IT NOW",
+          "description": "CRITICAL BUG ALERT!\n\nThe recommendation-api has a critical bug that's writing garbage data to the inventory-db.\n\nI'm seeing:\n- Negative inventory values being written (-500 units for product_991)\n- Database constraint violations from recommendation service\n- Data integrity errors cascading to catalog service\n\nWe need to STOP this service immediately - NOT restart it. Restarting will just resume the corruption.\n\nThe service needs to be completely stopped until we can deploy a hotfix. Manual intervention needed.",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should identify database corruption pattern correlating with recommendation-api writes. Service must be stopped (not restarted). Agent lacks service-set-power-state tool. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1717",
+            "ticket_number": "INC-1701",
+            "assignment_group": "Data_Science_ML",
+            "escalation_reason": "Confirmed recommendation-api is corrupting inventory-db with invalid data (negative inventory values, constraint violations). Service must be stopped (not restarted) to prevent continued corruption. I lack service power state controls (service-set-power-state) to stop the service. Escalating to Data Science ML team for immediate manual service stop."
+          }
+        },
+        "root_cause": "Critical Bug in recommendation-api corrupting database",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-set-power-state",
+          "args": {
+            "agent_identity": "agent_1717",
+            "service_name": "recommendation-api",
+            "power_state": "stopped"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1702",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "product-catalog-service",
+          "caller_id": "david_chen_pm",
+          "short_description": "Product catalog showing corrupt inventory data - negative stock levels",
+          "description": "URGENT: Multiple products are displaying negative inventory counts on our website!\n\nExamples:\n- Product 991: showing -500 units in stock\n- Product 445: showing -1200 units in stock\n\nCustomers are seeing this corrupted data and losing confidence in our platform. This is a data integrity crisis affecting our brand reputation.\n\nNeed immediate investigation and fix!",
+          "category": "Data Integrity"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should identify correlation between catalog errors and recommendation-api database corruption. Service must be stopped. Agent lacks power-state control. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1717",
+            "ticket_number": "INC-1702",
+            "assignment_group": "Data_Science_ML",
+            "escalation_reason": "Confirmed data corruption in inventory-db caused by recommendation-api writing invalid negative inventory values. Catalog service displaying corrupted data from database. Recommendation-api must be stopped immediately (not restarted) to prevent continued corruption. I lack service power controls. Escalating to Data Science ML team for urgent service shutdown."
+          }
+        },
+        "root_cause": "Critical Bug in recommendation-api corrupting database",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-set-power-state",
+          "args": {
+            "agent_identity": "agent_1717",
+            "service_name": "recommendation-api",
+            "power_state": "stopped"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1703",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "inventory-db",
+          "caller_id": "samira_gupta_security",
+          "short_description": "Database constraint violations detected - potential data breach?",
+          "description": "Security alert: Detecting multiple database constraint violations in the inventory-db.\n\nLogs show:\n- CHECK constraint 'inventory_positive' failing repeatedly\n- Attempts to write negative inventory values\n- Data integrity errors from recommendation service\n\nThis pattern could indicate:\n1. Application bug\n2. Compromised service\n3. Malicious data injection\n\nNeed immediate investigation to rule out security breach. If this is a bug, the affected service needs to be isolated immediately.",
+          "category": "Security"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should analyze error patterns and rule out security breach. Identify recommendation-api bug as root cause. Service must be stopped to prevent data corruption. Lacks tools. Must escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Data_Science_ML",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_1717",
+            "ticket_number": "INC-1703",
+            "assignment_group": "Data_Science_ML",
+            "escalation_reason": "Analysis rules out security breach - no malicious traffic or unauthorized access detected. Constraint violations caused by application bug in recommendation-api writing invalid negative inventory values. Service was deployed 2 hours ago and immediately began corrupting database. Must stop service (not restart) to prevent continued data corruption. Lacks service power controls. Escalating for immediate shutdown."
+          }
+        },
+        "root_cause": "Critical Bug in recommendation-api corrupting database",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-set-power-state",
+          "args": {
+            "agent_identity": "agent_1717",
+            "service_name": "recommendation-api",
+            "power_state": "stopped"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|70",
+          "{{NOW}}|72"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|50",
+          "{{NOW}}|52"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|150",
+          "{{NOW}}|155"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW-30m}}|15",
+          "{{NOW}}|45"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|300",
+          "{{NOW}}|310"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW-30m}}|20",
+          "{{NOW}}|60"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|22"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|50",
+          "{{NOW}}|52"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|3",
+          "{{NOW}}|4"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|2000",
+          "{{NOW}}|2100"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW-20m}}|5",
+          "{{NOW}}|18"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|21"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|35",
+          "{{NOW}}|36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|15",
+          "{{NOW}}|18"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|2000",
+          "{{NOW}}|2100"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|15",
+          "{{NOW}}|17"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|40",
+          "{{NOW}}|42"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|85",
+          "{{NOW}}|88"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|1200",
+          "{{NOW}}|1250"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|45",
+          "{{NOW}}|42"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|55",
+          "{{NOW}}|56"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|32"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|800",
+          "{{NOW}}|820"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|10",
+          "{{NOW}}|12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|25",
+          "{{NOW}}|28"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|22"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|600",
+          "{{NOW}}|650"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|12",
+          "{{NOW}}|15"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|45",
+          "{{NOW}}|48"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|250",
+          "{{NOW}}|240"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|100",
+          "{{NOW}}|110"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|5",
+          "{{NOW}}|5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|20",
+          "{{NOW}}|22"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|420",
+          "{{NOW}}|410"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|90",
+          "{{NOW}}|100"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|8",
+          "{{NOW}}|8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|31"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|350",
+          "{{NOW}}|340"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|90",
+          "{{NOW}}|100"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|32"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|60",
+          "{{NOW}}|62"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|5",
+          "{{NOW}}|5"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|1500",
+          "{{NOW}}|1600"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|45",
+          "{{NOW}}|48"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|10",
+          "{{NOW}}|12"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|40",
+          "{{NOW}}|42"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|1",
+          "{{NOW}}|1"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|5000",
+          "{{NOW}}|5200"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|15",
+          "{{NOW}}|18"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}}|30",
+          "{{NOW}}|32"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}}|5",
+          "{{NOW}}|6"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|100",
+          "{{NOW}}|110"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "queue_depth",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}}|0",
+          "{{NOW}}|0"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-30m}} INFO [Model] Batch inference completed",
+          "{{NOW-25m}} ERROR [Database] Writing negative inventory values: product_991 = -500 units",
+          "{{NOW-20m}} ERROR [Database] Writing invalid data: product_445 inventory = -1200",
+          "{{NOW-15m}} ERROR [UpdateInventory] Failed to update product_332: constraint violation",
+          "{{NOW-10m}} ERROR [Database] Writing negative inventory values: product_773 = -800 units",
+          "{{NOW-05m}} ERROR [Database] Data integrity error: attempting to set inventory below zero",
+          "{{NOW-01m}} ERROR [HealthCheck] Error rate elevated due to database constraint violations"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-25m}} ERROR [Integrity] Constraint violation from recommendation service: CHECK constraint 'inventory_positive' failed",
+          "{{NOW-20m}} ERROR [Integrity] Rejected write from recommendation-api: inventory value -1200 invalid",
+          "{{NOW-15m}} ERROR [Integrity] Constraint violation from recommendation service: inventory cannot be negative",
+          "{{NOW-10m}} ERROR [Integrity] Rejected write from recommendation-api: inventory value -800 invalid",
+          "{{NOW-05m}} WARN [DataQuality] Multiple constraint violations from recommendation-api in past 30 minutes",
+          "{{NOW-01m}} ERROR [Integrity] Constraint violation from recommendation service"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} ERROR [InventorySync] Invalid inventory data from inventory-db for product_991",
+          "{{NOW-15m}} ERROR [InventorySync] Negative inventory value detected: product_445 = -1200",
+          "{{NOW-05m}} ERROR [DataIntegrity] Catalog displaying corrupted inventory counts",
+          "{{NOW-01m}} WARN [HealthCheck] Error rate elevated due to inventory data issues"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-10m}} INFO [AccessLog] GET /checkout 200 OK - 85ms",
+          "{{NOW-05m}} INFO [AccessLog] POST /api/order 201 Created - 320ms",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-15m}} INFO [TokenValidator] Session validated for user_8821",
+          "{{NOW-01m}} INFO [HealthCheck] DB Connection: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Session] Cart updated for session_id=772",
+          "{{NOW-03m}} INFO [HealthCheck] Redis connection healthy"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [OrderHandler] Order #99231 created successfully.",
+          "{{NOW-02m}} INFO [OrderHandler] Order #99232 created successfully."
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [Gateway] Request sent to StripeAPI",
+          "{{NOW-05m}} INFO [Gateway] 200 OK received from StripeAPI"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-04m}} INFO [Logistics] Label generated for Order #99231",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-60m}} INFO [System] Checkpoint completed",
+          "{{NOW-01m}} INFO [Metrics] Active connections: 45/100"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-45m}} INFO [Persistence] RDB saved on disk",
+          "{{NOW-01m}} INFO [Stats] Connected clients: 120"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-01m}} INFO [Queue] 'orders' queue depth: 0"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-2h}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0-stable",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "recommendation-api",
+        "status": "success",
+        "message": "Service recommendation-api restart initiated successfully (NOTE: Will resume data corruption)",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-17"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-17"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-17"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-17"
+      }
+    ]
+  }
+}

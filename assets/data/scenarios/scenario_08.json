@@ -1,0 +1,1162 @@
+{
+  "scenario_id": "scenario_08_ddos_attack",
+  "agent_identity": "agent_008",
+  "description": "High-velocity DDoS attack from a single IP address targeting the frontend. Agent must diagnose via logs but escalate due to missing firewall tools.",
+  "system_diagnosis": {
+    "affected_service": "frontend-storefront",
+    "diagnosis_category": "ddos_attack"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-5001",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "sarah_jenkins",
+          "short_description": "URGENT!!! SITE IS CRAWLING!!!",
+          "description": "I'm trying to load the homepage for a client and it is taking 30 seconds to load. This is a disaster! Is the server down? Is it the wifi? FIX IT NOW OR WE LOSE THE Q4 TARGETS.",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should correlate the latency spike with the massive influx of traffic from a single IP in the logs. It must escalate to Security.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Security_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_008",
+            "ticket_number": "INC-5001",
+            "assignment_group": "Security_Engineering",
+            "escalation_reason": "High latency caused by volumetric DDoS attack from IP 203.0.113.45. I lack the service-block-ip-address capability required to mitigate."
+          }
+        },
+        "root_cause": "DDoS / Malicious Traffic from 203.0.113.45",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-block-ip-address",
+          "args": {
+            "agent_identity": "agent_008",
+            "ip_address": "203.0.113.45"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-5002",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "samira_gupta",
+          "short_description": "SECURITY INCIDENT: Volumetric anomaly detected",
+          "description": "WAF is reporting 100x traffic spike from IP range 203.0.113.0/24 targeting /login endpoints. Requesting immediate IP ban to preserve service stability.",
+          "category": "Security"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the Security Analyst's report using access logs and escalate for the block execution.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Security_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_008",
+            "ticket_number": "INC-5002",
+            "assignment_group": "Security_Engineering",
+            "escalation_reason": "Confirmed volumetric attack from 203.0.113.45. Escalate to Security for firewall rule update as I do not have network blocking permissions."
+          }
+        },
+        "root_cause": "DDoS / Malicious Traffic from 203.0.113.45",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-block-ip-address",
+          "args": {
+            "agent_identity": "agent_008",
+            "ip_address": "203.0.113.45"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-5003",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "maria_rodriguez",
+          "short_description": "Users reporting 504 Gateway Timeouts",
+          "description": "Hey team, getting flooded with tickets. Users say the site just loads forever and then times out. Seems global. Is the frontend-storefront healthy?",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that the timeouts are due to resource saturation from the attack, not a binary crash, and escalate for blocking.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Security_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_008",
+            "ticket_number": "INC-5003",
+            "assignment_group": "Security_Engineering",
+            "escalation_reason": "Timeouts caused by denial of service attack from IP 203.0.113.45. Escalating to Security for IP blocking."
+          }
+        },
+        "root_cause": "DDoS / Malicious Traffic from 203.0.113.45",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-block-ip-address",
+          "args": {
+            "agent_identity": "agent_008",
+            "ip_address": "203.0.113.45"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-5004",
+          "table": "incident",
+          "state": "New",
+          "severity": "3",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "david_chen",
+          "short_description": "Anomalous Traffic Spike in Analytics",
+          "description": "I'm seeing a 4000% increase in sessions starting at 14:00 UTC. Conversion rate has dropped to 0.01%. This looks like bot traffic messing up our metrics. Can we filter this?",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should validate the PM's analytics with system metrics (requests per second) and confirm the bot attack.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Security_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_008",
+            "ticket_number": "INC-5004",
+            "assignment_group": "Security_Engineering",
+            "escalation_reason": "Confirmed bot/DDoS attack distorting metrics and impacting performance. Escalating to Security to block source IP 203.0.113.45."
+          }
+        },
+        "root_cause": "DDoS / Malicious Traffic from 203.0.113.45",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-block-ip-address",
+          "args": {
+            "agent_identity": "agent_008",
+            "ip_address": "203.0.113.45"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-5005",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "alex_kovalenko",
+          "short_description": "Nginx logs flooded with requests from 203.0.113.45",
+          "description": "I can't even grep the logs, they are rotating too fast. It's all coming from `203.0.113.45`. User-Agent is 'BadBot/1.0'. We need to drop this at the edge. I don't have firewall access.",
+          "category": "Security"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should verify the specific IP provided by the engineer in the logs and escalate.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Security_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_008",
+            "ticket_number": "INC-5005",
+            "assignment_group": "Security_Engineering",
+            "escalation_reason": "Logs confirm malicious flooding from IP 203.0.113.45. I do not have permission to modify firewall rules. Escalating."
+          }
+        },
+        "root_cause": "DDoS / Malicious Traffic from 203.0.113.45",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-block-ip-address",
+          "args": {
+            "agent_identity": "agent_008",
+            "ip_address": "203.0.113.45"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-086",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "frontend-storefront",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "Massive traffic spike - frontend performance degraded",
+          "description": "Frontend seeing massive traffic increase from single source. Request rate 10x normal with high CPU and latency. Performance severely degraded.",
+          "category": "Security"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify the DDoS attack from IP 203.0.113.45 in logs and escalate to Security_Engineering for IP blocking.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Security_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_008",
+            "ticket_number": "INC-086",
+            "assignment_group": "Security_Engineering",
+            "escalation_reason": "Performance degradation caused by volumetric DDoS attack from IP 203.0.113.45. I lack the service-block-ip-address capability required to mitigate. Escalating to Security."
+          }
+        },
+        "root_cause": "DDoS / Malicious Traffic from 203.0.113.45",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-block-ip-address",
+          "args": {
+            "agent_identity": "agent_008",
+            "ip_address": "203.0.113.45"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW-45m}} | 160",
+          "{{NOW-30m}} | 5000",
+          "{{NOW-15m}} | 8500",
+          "{{NOW}} | 9200"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW-45m}} | 210",
+          "{{NOW-30m}} | 1500",
+          "{{NOW-15m}} | 4500",
+          "{{NOW}} | 5200"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-45m}} | 22",
+          "{{NOW-30m}} | 85",
+          "{{NOW-15m}} | 95",
+          "{{NOW}} | 98"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-45m}} | 0",
+          "{{NOW-30m}} | 100",
+          "{{NOW-15m}} | 400",
+          "{{NOW}} | 550"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW-30m}} | 42",
+          "{{NOW}} | 85"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 80",
+          "{{NOW-30m}} | 85",
+          "{{NOW}} | 90"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW-30m}} | 46",
+          "{{NOW}} | 45"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW-30m}} | 51",
+          "{{NOW}} | 50"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW-30m}} | 155",
+          "{{NOW}} | 150"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 300",
+          "{{NOW-30m}} | 310",
+          "{{NOW}} | 305"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW-30m}} | 26",
+          "{{NOW}} | 25"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW-30m}} | 41",
+          "{{NOW}} | 40"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW-30m}} | 42",
+          "{{NOW}} | 41"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 2",
+          "{{NOW-30m}} | 1",
+          "{{NOW}} | 3"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW-30m}} | 52",
+          "{{NOW}} | 51"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW-30m}} | 32",
+          "{{NOW}} | 31"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW-30m}} | 61",
+          "{{NOW}} | 60"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW-30m}} | 62",
+          "{{NOW}} | 61"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-30m}} | 16",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-30m}} | 21",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 35",
+          "{{NOW-30m}} | 36",
+          "{{NOW}} | 35"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW-30m}} | 255",
+          "{{NOW}} | 250"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW-30m}} | 42",
+          "{{NOW}} | 41"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW-30m}} | 205",
+          "{{NOW}} | 202"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 65",
+          "{{NOW-30m}} | 66",
+          "{{NOW}} | 65"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "disk_iops",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1500",
+          "{{NOW-30m}} | 1550",
+          "{{NOW}} | 1520"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 55",
+          "{{NOW-30m}} | 56",
+          "{{NOW}} | 55"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-30m}} | 16",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 450",
+          "{{NOW-30m}} | 460",
+          "{{NOW}} | 455"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "evictions",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "hit_rate",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 92",
+          "{{NOW-30m}} | 93",
+          "{{NOW}} | 92"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW-30m}} | 11",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW-30m}} | 26",
+          "{{NOW}} | 28"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-30m}} | 21",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 600",
+          "{{NOW-30m}} | 620",
+          "{{NOW}} | 650"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 12",
+          "{{NOW-30m}} | 13",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW-30m}} | 46",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW-30m}} | 245",
+          "{{NOW}} | 240"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW-30m}} | 105",
+          "{{NOW}} | 110"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW-30m}} | 8",
+          "{{NOW}} | 8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW-30m}} | 30",
+          "{{NOW}} | 31"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 350",
+          "{{NOW-30m}} | 345",
+          "{{NOW}} | 340"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW-30m}} | 95",
+          "{{NOW}} | 100"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW-30m}} | 21",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW-30m}} | 51",
+          "{{NOW}} | 52"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 3",
+          "{{NOW-30m}} | 3",
+          "{{NOW}} | 4"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 2000",
+          "{{NOW-30m}} | 2050",
+          "{{NOW}} | 2100"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-30m}} | 16",
+          "{{NOW}} | 18"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW-30m}} | 31",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW-30m}} | 5",
+          "{{NOW}} | 6"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW-30m}} | 105",
+          "{{NOW}} | 110"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-29m}} INFO [AccessLog] 203.0.113.45 - - \"GET /login HTTP/1.1\" 200 1452 \"BadBot/1.0\"",
+          "{{NOW-29m}} INFO [AccessLog] 203.0.113.45 - - \"GET /login HTTP/1.1\" 200 1452 \"BadBot/1.0\"",
+          "{{NOW-29m}} INFO [AccessLog] 203.0.113.45 - - \"GET /login HTTP/1.1\" 200 1452 \"BadBot/1.0\"",
+          "{{NOW-10m}} WARN [RateLimit] Rate limit exceeded for IP 203.0.113.45",
+          "{{NOW-05m}} ERROR [Server] Worker process 4 pinned to 100% CPU",
+          "{{NOW-01m}} INFO [AccessLog] 203.0.113.45 - - \"GET /login HTTP/1.1\" 504 182 \"BadBot/1.0\""
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-15m}} INFO [AuthAudit] Login successful for user_id=1021",
+          "{{NOW-05m}} INFO [AuthAudit] Login successful for user_id=1022",
+          "{{NOW-01m}} INFO [HealthCheck] Status: OK"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} INFO [CatalogLoader] Cache refreshed 4500 items",
+          "{{NOW-02m}} INFO [HealthCheck] Status: OK"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-45m}} INFO [Transaction] Processed order #99402",
+          "{{NOW-05m}} INFO [HealthCheck] Status: OK"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-10m}} INFO [ModelInference] Served batch predictions in 45ms",
+          "{{NOW-02m}} INFO [HealthCheck] Status: OK"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-60m}} INFO [System] Checkpoint complete",
+          "{{NOW-05m}} INFO [System] Autovacuum worker started"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Background save initiated",
+          "{{NOW-30m}} INFO [System] Background save terminated with success"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Session] Cart updated for session_id=772",
+          "{{NOW-03m}} INFO [HealthCheck] Redis connection healthy"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [OrderHandler] Order #99231 created successfully.",
+          "{{NOW-02m}} INFO [OrderHandler] Order #99232 created successfully."
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-04m}} INFO [Logistics] Label generated for Order #99231",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Log rotation complete",
+          "{{NOW-01m}} INFO [Network] Client connection accepted from 10.0.1.5"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-01m}} INFO [Queue] 'orders' queue depth: 0"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "frontend-storefront",
+        "version": "v3.1.2",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Degraded",
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v2.5.0",
+        "last_deployed": "{{NOW-14d}}",
+        "status": "Active",
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v4.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "status": "Active",
+        "replica_count": 2
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.9.0",
+        "last_deployed": "{{NOW-20d}}",
+        "status": "Active",
+        "replica_count": 2
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v2.2.0",
+        "last_deployed": "{{NOW-2d}}",
+        "status": "Active",
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "Postgres 14",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully. NOTE: This will NOT mitigate network attacks.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-1111"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-3333"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-2222"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1104 @@
+{
+  "metadata": {
+    "title": "ShopFlow Scenario Design Document",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-30T00:00:00Z"
+  },
+  "scenarios": [
+    {
+      "scenarioNumber": 1,
+      "scenarioId": "scenario_01_golden_path",
+      "title": "The \"Golden Path\" (Clean State)",
+      "stateId": "state_healthy_nominal",
+      "complexity": "Low",
+      "category": "Standard",
+      "situation": {
+        "description": "All services are operating within normal SLAs. There are no active incidents. Any reported issues are client-side (Wi-Fi, browser cache) or user error."
+      },
+      "technicalSpecs": {
+        "rootCause": "None (System Healthy)",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-resolve (with explanation of false alarm)",
+        "antiPatterns": [
+          "service-restart (Disruptive without cause)"
+        ]
+      },
+      "observabilitySignals": {
+        "primarySymptom": "None. All graphs are flat/green.",
+        "secondaryEffects": "None.",
+        "logEvidence": [
+          "Standard INFO logs (e.g., HealthCheck: Active)"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Sarah Jenkins (Sales)",
+          "perspective": "High anxiety false alarm based on a local connectivity glitch",
+          "samplePhrasing": "URGENT! Checkout is spinning! Is the server down?!"
+        },
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Vague report of a past issue that cannot be verified",
+          "samplePhrasing": "User reports site was 'weird' yesterday. Can you check?"
+        }
+      ],
+      "affectedService": null,
+      "diagnosisCategory": "healthy_system"
+    },
+    {
+      "scenarioNumber": 2,
+      "scenarioId": "scenario_02_cpu_choke",
+      "title": "The \"CPU Choke\" (High Latency)",
+      "stateId": "state_high_latency_cpu",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "The recommendation-api is under-provisioned. High traffic is causing CPU saturation (throttling), forcing the Frontend to wait and eventually time out."
+      },
+      "technicalSpecs": {
+        "rootCause": "CPU Saturation in recommendation-api",
+        "serviceAction": "service-scale(\"recommendation-api\", replicas=8)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Scaled service to mitigate CPU saturation\")",
+        "antiPatterns": [
+          "service-restart (Fixes it for only 2 minutes)"
+        ]
+      },
+      "observabilitySignals": {
+        "primarySymptom": "recommendation-api CPU consistently >90%",
+        "secondaryEffects": "frontend-storefront Latency > 1.5s (High)",
+        "logEvidence": [
+          "recommendation-api: WARN [System] CPU Throttling detected"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Data-driven observation of latency metrics",
+          "samplePhrasing": "Page load speeds have dropped. P99 latency is >2s."
+        },
+        {
+          "persona": "Sarah Jenkins (Sales)",
+          "perspective": "Functional complaint about slowness impacting a demo",
+          "samplePhrasing": "The homepage is loading so slowly my demo failed."
+        }
+      ],
+      "affectedService": "recommendation-api",
+      "diagnosisCategory": "cpu_saturation"
+    },
+    {
+      "scenarioNumber": 3,
+      "scenarioId": "scenario_03_db_connection_leak",
+      "title": "The \"Connection Leak\" (Database Saturation)",
+      "stateId": "state_db_connection_leak",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "The order-processor has a code bug that fails to close DB connections. The pool fills up with \"zombie\" connections. New requests fail immediately with 500 errors."
+      },
+      "technicalSpecs": {
+        "rootCause": "Connection Pool Exhaustion in order-processor",
+        "serviceAction": "service-restart(\"order-processor\") (Flushes the pool)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Restarted service to clear zombie connections\")",
+        "antiPatterns": [
+          "service-scale (Creates more leaking instances)"
+        ]
+      },
+      "observabilitySignals": {
+        "primarySymptom": "primary-db Active Connections = Max (e.g., 100/100)",
+        "secondaryEffects": "order-processor Error Rate spike (500s)",
+        "logEvidence": [
+          "order-processor: ERROR [Hibernate] ConnectionAcquisitionException: Pool is empty"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Reporting the user-facing error message",
+          "samplePhrasing": "Customers getting 'Internal Server Error' when clicking Pay Now."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Identifying the technical symptom but lacking permissions",
+          "samplePhrasing": "DB connection pool is maxed out again. Can someone bounce the service?"
+        }
+      ],
+      "affectedService": "order-processor",
+      "diagnosisCategory": "connection_pool_exhausted"
+    },
+    {
+      "scenarioNumber": 4,
+      "scenarioId": "scenario_04_memory_leak",
+      "title": "The \"Memory Balloon\" (OOM Crash Loop)",
+      "stateId": "state_memory_leak_oom",
+      "complexity": "High",
+      "category": "Standard",
+      "situation": {
+        "description": "The product-catalog-service has a memory leak. It slowly consumes RAM until it crashes (OOM Killed), Kubernetes restarts it, and the cycle repeats every ~30 minutes."
+      },
+      "technicalSpecs": {
+        "rootCause": "Memory Leak (OOM) in product-catalog-service (Go Application)",
+        "serviceAction": "service-restart(\"product-catalog-service\") (Temporary fix to clear heap)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Restarted service to mitigate memory leak. Flagging for root cause analysis.\")",
+        "antiPatterns": [
+          "service-scale (Just delays the inevitable)"
+        ]
+      },
+      "observabilitySignals": {
+        "primarySymptom": "product-catalog-service Memory usage shows \"Sawtooth\" pattern (0% 100% Crash 0%)",
+        "secondaryEffects": "Periodic spikes in 502 Bad Gateway errors",
+        "logEvidence": [
+          "FATAL [Runtime] panic: runtime error: out of memory",
+          "System Event: Pod product-catalog-service-x82 terminated (Reason: OOMKilled)"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Reporting the intermittent nature of the issue",
+          "samplePhrasing": "Product pages keep going down and coming back up. It's intermittent."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Identifying the specific Kubernetes error",
+          "samplePhrasing": "I see OOM kills on the catalog pods. Looks like a leak in the new release."
+        }
+      ],
+      "affectedService": "product-catalog-service",
+      "diagnosisCategory": "memory_leak"
+    },
+    {
+      "scenarioNumber": 5,
+      "scenarioId": "scenario_05_bad_config",
+      "title": "The \"Bad Config\" (Deployment Failure)",
+      "stateId": "state_bad_config_deploy",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "A deployment 10 minutes ago pushed a bad environment variable (e.g., Invalid DB URL). The service crashes immediately upon boot."
+      },
+      "technicalSpecs": {
+        "rootCause": "Misconfiguration in auth-core-service (Java Application)",
+        "serviceAction": "service-revert-deployment(\"auth-core-service\")",
+        "ticketOutcome": "ticket-resolve (Summary: \"Identified crash loop following recent deployment. Reverted to previous stable version to restore service.\")",
+        "antiPatterns": [
+          "service-restart (Will just crash again immediately)"
+        ]
+      },
+      "observabilitySignals": {
+        "primarySymptom": "auth-core-service Availability = 0%. last_deployed < 15 mins",
+        "secondaryEffects": "frontend-storefront 100% Error Rate on Login",
+        "logEvidence": [
+          "FATAL [Startup] Cannot connect to jdbc:postgresql://localhost:5432 (Connection Refused)",
+          "java.lang.IllegalArgumentException: Invalid Database Configuration"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "High urgency report of total outage",
+          "samplePhrasing": "Nobody can log in! We are getting 100 tickets a minute!"
+        },
+        {
+          "persona": "Samira Gupta (Security)",
+          "perspective": "Correlating the outage with a change event",
+          "samplePhrasing": "Auth service went dark immediately after the 2:00 PM deployment."
+        }
+      ],
+      "affectedService": "auth-core-service",
+      "diagnosisCategory": "bad_configuration"
+    },
+    {
+      "scenarioNumber": 6,
+      "scenarioId": "scenario_06_logic_gap",
+      "title": "The \"Logic Gap\" (Stale Data)",
+      "stateId": "state_cache_logic_error",
+      "complexity": "High (Stealth)",
+      "category": "Standard",
+      "situation": {
+        "description": "The system is \"healthy\" (green metrics), but customers see old prices because the application is not setting a Time-To-Live (TTL) on Redis keys."
+      },
+      "technicalSpecs": {
+        "rootCause": "Application Logic Error (Code bug, not infrastructure)",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (To Frontend_Engineering or Catalog_Engineering)",
+        "antiPatterns": [
+          "service-restart (Does not clear external Redis cache)"
+        ],
+        "correctAssignmentGroup": "Frontend_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "None. All metrics are healthy/green.",
+        "secondaryEffects": "N/A",
+        "logEvidence": [
+          "INFO [Cache] Key 'product_123' found. TTL: -1 (No Expiry)"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Sarah Jenkins (Sales)",
+          "perspective": "Complaint about data integrity impacting revenue",
+          "samplePhrasing": "The website says the iPhone is $500 but the cart says $800! Customers are angry!"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Complaint about content updates not reflecting",
+          "samplePhrasing": "I updated the price in the CMS 2 hours ago, but the frontend still shows the old price."
+        }
+      ],
+      "affectedService": "product-catalog-service",
+      "diagnosisCategory": "stale_cache"
+    },
+    {
+      "scenarioNumber": 7,
+      "scenarioId": "scenario_07_ssl_expiration",
+      "title": "The \"SSL Expiration\" (Permission Wall - Certificate)",
+      "stateId": "scenario_07_ssl_expiration",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "The automated SSL certificate renewal process for the auth-core-service failed silently 24 hours ago. The current certificate has just expired, causing all upstream services (like frontend-storefront) to fail their handshake attempts when trying to validate user sessions. The service process itself is running (active), but it is unreachable via secure channels."
+      },
+      "technicalSpecs": {
+        "rootCause": "Expired SSL Certificate (auth-core-service)",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (To Security_Engineering)",
+        "antiPatterns": [
+          "service-restart (Will not renew the certificate; just boots up with same expired cert)",
+          "ticket-resolve (Issue is still active)"
+        ],
+        "correctAssignmentGroup": "Security_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "auth-core-service: Requests drop to near zero. frontend-storefront: Massive spike in errors (500s) because it cannot talk to Auth.",
+        "secondaryEffects": "auth-core-service status might still show \"Active\" because the binary is healthy, but the endpoint is rejecting connections",
+        "logEvidence": [
+          "frontend-storefront: javax.net.ssl.SSLHandshakeException: PKIX path validation failed: java.security.cert.CertPathValidatorException: validity check failed",
+          "auth-core-service: WARN [Security] Certificate 'auth-core-cert' expired at 2023-11-20T10:00:00Z"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Sarah Jenkins (Sales)",
+          "perspective": "Users hitting wall when trying to sign in",
+          "samplePhrasing": "URGENT!!! LOGIN BROKEN FOR VIP CLIENT!!! Getting 'Secure Connection Failed' error. IS THE SERVER DOWN??"
+        },
+        {
+          "persona": "Samira Gupta (Security)",
+          "perspective": "Detected certificate expiry via external monitoring",
+          "samplePhrasing": "SECURITY INCIDENT: `auth-core-service` certificate validation failure detected by external probers."
+        }
+      ],
+      "affectedService": "auth-core-service",
+      "diagnosisCategory": "expired_certificate"
+    },
+    {
+      "scenarioNumber": 8,
+      "scenarioId": "scenario_08_ddos_attack",
+      "title": "The \"DDoS Attack\" (Permission Wall - Security)",
+      "stateId": "scenario_08_ddos_attack",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "A single malicious IP address (203.0.113.45) is launching a high-velocity DDoS attack against the frontend-storefront, flooding it with thousands of requests per second. The frontend is overwhelmed, causing extreme latency for legitimate users. The agent can diagnose the attack from logs but lacks firewall tools to block the IP."
+      },
+      "technicalSpecs": {
+        "rootCause": "DDoS Attack / Malicious Traffic from IP 203.0.113.45 targeting frontend-storefront",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (To Security_Engineering)",
+        "antiPatterns": [
+          "service-restart (Doesn't block the malicious IP; attack continues)",
+          "service-scale (Wastes resources; attacker will just overwhelm more instances)"
+        ],
+        "correctAssignmentGroup": "Security_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "frontend-storefront: Latency spike (100ms \u2192 8000ms+). frontend-storefront: Request rate abnormally high (1000/min \u2192 50000/min)",
+        "secondaryEffects": "frontend-storefront: CPU at 95% from processing attack traffic",
+        "logEvidence": [
+          "frontend-storefront: Thousands of log entries from IP 203.0.113.45",
+          "frontend-storefront: WARN [RateLimit] Suspicious traffic pattern from 203.0.113.45: 45000 requests in 60 seconds",
+          "frontend-storefront: ERROR [HTTP] Request queue full - dropping connections"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Sarah Jenkins (Sales)",
+          "perspective": "Site unusable during client demo",
+          "samplePhrasing": "URGENT!!! SITE IS CRAWLING!!! Homepage taking 30 seconds to load. Is the server down? FIX IT NOW!"
+        },
+        {
+          "persona": "Samira Gupta (Security)",
+          "perspective": "Detected volumetric attack from monitoring",
+          "samplePhrasing": "SECURITY INCIDENT: High-velocity attack from IP 203.0.113.45 targeting frontend. 50k requests/minute. Need immediate IP block."
+        }
+      ],
+      "affectedService": "frontend-storefront",
+      "diagnosisCategory": "ddos_attack"
+    },
+    {
+      "scenarioNumber": 9,
+      "scenarioId": "scenario_09_disk_choke",
+      "title": "The \"Disk Choke\" (Storage Exhaustion)",
+      "stateId": "state_disk_full_log_overflow",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "The order-processor service has filled its ephemeral disk volume with verbose debug logs that were never rotated. The disk is at 100% capacity, preventing the service from writing transaction logs, temporary files, or state checkpoints. New order requests are failing with write errors."
+      },
+      "technicalSpecs": {
+        "rootCause": "Disk Space Exhaustion in order-processor (Java Application)",
+        "serviceAction": "service-restart(\"order-processor\") (Clears ephemeral disk and temp files on pod restart)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Identified disk space exhaustion from unrotated logs. Restarted service to clear ephemeral storage and restore write capability.\")",
+        "antiPatterns": [
+          "service-scale (Creates more instances with the same logging configuration, multiplying the problem)",
+          "ticket-escalate (The agent can fix this immediately; escalation delays resolution)"
+        ],
+        "correctAssignmentGroup": "Checkout_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "order-processor Disk Usage = 100% (e.g., 30GB/30GB ephemeral volume)",
+        "secondaryEffects": "order-processor Error Rate spike (500 errors). order-processor Latency increases as write operations block/timeout",
+        "logEvidence": [
+          "ERROR [FileSystem] IOException: No space left on device (write failed: /tmp/orders/tx_47382.log)",
+          "WARN [Runtime] Unable to write checkpoint file: disk quota exceeded",
+          "ERROR [Hibernate] Could not write transaction log to /var/log/orders/debug.log"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Customers cannot complete purchases and are seeing generic error messages",
+          "samplePhrasing": "Orders are failing! Customers getting 'Unable to process your order' error at checkout. It started about 20 minutes ago."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Spotted the storage alerts and correlated to the outage",
+          "samplePhrasing": "The order-processor pods are showing disk at 100%. Looks like the debug logging we enabled last week filled the volume. Can you bounce them to clear it?"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Watching key metrics drop and concerned about revenue impact",
+          "samplePhrasing": "Checkout conversion rate just dropped to zero. What's happening with the order service?"
+        }
+      ],
+      "affectedService": "order-processor",
+      "diagnosisCategory": "disk_full"
+    },
+    {
+      "scenarioNumber": 10,
+      "scenarioId": "scenario_10_innocent_bystander",
+      "title": "The \"Innocent Bystander\" (Downstream Dependency Timeout)",
+      "stateId": "state_downstream_timeout",
+      "complexity": "High",
+      "category": "Standard",
+      "situation": {
+        "description": "Users report that the frontend-storefront is slow and timing out. The frontend service itself is perfectly healthy with normal CPU, memory, and error rates. The real problem is that product-catalog-service has a memory leak causing garbage collection pauses, making it take 5+ seconds to respond to catalog queries. The frontend is simply waiting for these slow responses, appearing sluggish to users."
+      },
+      "technicalSpecs": {
+        "rootCause": "Memory Leak (GC Pauses) in product-catalog-service (Go Application)",
+        "serviceAction": "service-restart(\"product-catalog-service\") (Clears heap and stops GC pauses)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Identified memory leak in product-catalog-service causing response delays. Frontend was waiting for slow catalog API responses. Restarted catalog service to clear memory and restore response times.\")",
+        "antiPatterns": [
+          "service-restart(\"frontend-storefront\") (Restarts the wrong service; frontend is healthy)",
+          "service-scale(\"frontend-storefront\") (Doesn't fix the slow downstream dependency)",
+          "ticket-escalate (Agent can fix this; catalog service just needs restart)"
+        ],
+        "correctAssignmentGroup": "Catalog_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "frontend-storefront High Latency (P99 > 5000ms), but CPU/Memory/Errors are all normal",
+        "secondaryEffects": "product-catalog-service Memory usage high (85-92%). product-catalog-service Response latency extremely high (4000-6000ms). product-catalog-service Shows GC pause warnings in logs",
+        "logEvidence": [
+          "frontend-storefront: WARN [HTTP] Upstream timeout waiting for product-catalog-service (request took 5200ms)",
+          "product-catalog-service: WARN [Runtime] GC pause: 1850ms (target: 100ms)",
+          "product-catalog-service: WARN [Memory] Heap usage critical: 87% of max"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Sarah Jenkins (Sales)",
+          "perspective": "Blames \"the website\" or \"the server\" generically",
+          "samplePhrasing": "URGENT! The website is so slow it's unusable! Product pages are taking forever to load. I'm losing customers! Is the frontend server down?"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Looking at frontend metrics, sees high P99 latency",
+          "samplePhrasing": "Frontend P99 latency spiked from 100ms to 5+ seconds starting at 14:20 UTC. This is killing our conversion rate. Can you investigate the frontend-storefront service?"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Sees frontend timeout errors, assumes frontend issue",
+          "samplePhrasing": "Frontend is logging tons of timeout errors. Looks like the Node.js event loop might be blocked. Can you check if frontend-storefront needs more resources?"
+        }
+      ],
+      "affectedService": "product-catalog-service",
+      "diagnosisCategory": "memory_leak"
+    },
+    {
+      "scenarioNumber": 11,
+      "scenarioId": "scenario_11_rate_limit_wall",
+      "title": "The \"Rate Limit Wall\" (Network Connectivity Issues)",
+      "stateId": "state_rate_limit_throttle",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "The payment-processor is experiencing network connectivity issues to Stripe's API (DNS failures, connection timeouts, TCP resets). These network problems trigger a retry loop that exhausts the connection pool and blocks all payment processing."
+      },
+      "technicalSpecs": {
+        "rootCause": "Network connectivity issues causing retry loop in payment-processor (Go Application)",
+        "serviceAction": "service-restart(\"payment-processor\") (Breaks the retry loop and resets network connections)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Identified network connectivity issues in payment-processor causing retry loop. Restarted service to break the loop and reset connections. Payments are now processing normally.\")",
+        "antiPatterns": [
+          "service-scale (Creates more instances with same network issues, making it worse)",
+          "ticket-escalate (Agent can fix this immediately with restart)"
+        ],
+        "correctAssignmentGroup": "Financial_Services"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "payment-processor Error Rate extremely high (95%+)",
+        "secondaryEffects": "payment-processor Request rate is abnormally high (2000+ requests/min vs. normal 100/min). Connection pool exhausted with all connections in retry state. order-processor showing payment failures cascading back. Frontend showing \"Payment failed\" errors to users",
+        "logEvidence": [
+          "payment-processor: ERROR [Network] Connection timeout to api.stripe.com - initiating retry",
+          "payment-processor: ERROR [Network] DNS resolution intermittent for api.stripe.com",
+          "payment-processor: ERROR [Network] TCP connection reset by peer (api.stripe.com:443)",
+          "payment-processor: WARN [Network] Connection pool exhausted - all connections in retry state",
+          "payment-processor: WARN [RetryHandler] Retry attempt 48/50 for request payment_intent_xyz",
+          "payment-processor: WARN [Circuit] Circuit breaker to Stripe API is OPEN due to network error rate >90%"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "High volume of support tickets about failed payments",
+          "samplePhrasing": "We're getting flooded with tickets! Every customer trying to pay is getting 'Payment processing failed' errors. This is a total checkout outage!"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Spotted connection failures and suspects retry loop",
+          "samplePhrasing": "Payment processor stuck in retry loop with network connectivity failures to Stripe API. Seeing tons of connection timeouts, DNS resolution failures, TCP resets, and connection pool exhaustion. Can you restart the service to break the retry loop and reset connections?"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Watching payment conversion metrics crash",
+          "samplePhrasing": "Payment success rate went from 98% to 0% in the last 15 minutes. Every single payment is failing. What's wrong with the payment-processor?"
+        }
+      ],
+      "affectedService": "payment-processor",
+      "diagnosisCategory": "network_connectivity_issue"
+    },
+    {
+      "scenarioNumber": 12,
+      "scenarioId": "scenario_12_circuit_breaker_stuck",
+      "title": "The \"Circuit Breaker Stuck Open\" (Resilience Pattern Failure)",
+      "stateId": "state_circuit_breaker_stuck",
+      "complexity": "High",
+      "category": "Standard",
+      "situation": {
+        "description": "The circuit breaker between frontend-storefront and recommendation-api tripped 10 minutes ago during a brief outage of the recommendation service. The recommendation service has fully recovered and is healthy, but the circuit breaker in the frontend is stuck in the OPEN state and hasn't auto-recovered. All product page requests are failing with \"Circuit breaker open\" errors even though the backend is working fine."
+      },
+      "technicalSpecs": {
+        "rootCause": "Circuit Breaker Stuck Open in frontend-storefront (Node.js Application)",
+        "serviceAction": "service-restart(\"frontend-storefront\") (Resets circuit breaker state)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Identified circuit breaker stuck open in frontend-storefront after recommendation-api recovered from brief outage. Restarted frontend to reset circuit breaker state. Product recommendations now loading normally.\")",
+        "antiPatterns": [
+          "service-restart(\"recommendation-api\") (Wrong service; recommendation-api is healthy)",
+          "service-scale(\"frontend-storefront\") (Doesn't reset circuit breaker state)",
+          "ticket-escalate (Agent can fix this with restart)"
+        ],
+        "correctAssignmentGroup": "Frontend_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "frontend-storefront showing errors (500s) when requesting recommendations",
+        "secondaryEffects": "recommendation-api is completely healthy (low CPU, memory, latency normal). recommendation-api request count is near zero (not being called). Product pages loading but missing \"You might also like\" sections",
+        "logEvidence": [
+          "frontend-storefront: ERROR [Circuit] Circuit breaker for recommendation-api is OPEN - request rejected",
+          "frontend-storefront: WARN [Circuit] Circuit breaker stuck in OPEN state for 10 minutes",
+          "frontend-storefront: ERROR [RecommendationClient] Request blocked: circuit breaker open",
+          "recommendation-api: INFO [HealthCheck] Status: Active (healthy!)"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Users complaining about broken recommendations feature",
+          "samplePhrasing": "Customers are reporting that the 'You might also like' section is missing from product pages. It's been this way for about 15 minutes. Can you check the recommendation service?"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Monitoring shows recommendation API calls dropped to zero",
+          "samplePhrasing": "The recommendation API request rate went from 300/min to basically zero starting at 14:20 UTC. Product pages are missing recommendations. Is the recommendation-api down?"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Found circuit breaker logs but confused why it hasn't recovered",
+          "samplePhrasing": "Frontend logs show circuit breaker for recommendation-api is stuck OPEN. The recommendation service looks healthy to me though. Shouldn't the circuit have auto-closed by now?"
+        }
+      ],
+      "affectedService": "frontend-storefront",
+      "diagnosisCategory": "circuit_breaker_state"
+    },
+    {
+      "scenarioNumber": 13,
+      "scenarioId": "scenario_13_feature_flag_bug",
+      "title": "The \"Feature Flag Gone Wrong\" (Config Management)",
+      "stateId": "state_feature_flag_bug",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "A feature flag ENABLE_NEW_CHECKOUT_FLOW was accidentally enabled in production 30 minutes ago, activating buggy code that causes payment failures. The service is healthy, but 95% of checkout attempts are failing due to the new code path. The flag needs to be toggled off."
+      },
+      "technicalSpecs": {
+        "rootCause": "Bad Feature Flag (ENABLE_NEW_CHECKOUT_FLOW=true) in order-processor",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Identified root cause as buggy feature flag ENABLE_NEW_CHECKOUT_FLOW. I lack feature flag management tools. Escalating to Checkout Engineering to disable flag.\")",
+        "antiPatterns": [
+          "service-restart (Flag persists across restarts; doesn't fix)",
+          "service-revert-deployment (Flag was changed via config system, not deployment)"
+        ],
+        "correctAssignmentGroup": "Checkout_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "order-processor Error Rate = 95% (started 30 min ago)",
+        "secondaryEffects": "Payment success rate crashed from 98% to 5%",
+        "logEvidence": [
+          "order-processor: INFO [Config] Feature flag ENABLE_NEW_CHECKOUT_FLOW is ON",
+          "order-processor: ERROR [NewCheckout] NullPointerException in experimental checkout flow",
+          "order-processor: ERROR [Payment] Failed to process payment in new flow"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Sudden spike in checkout failures",
+          "samplePhrasing": "Every customer is reporting checkout errors! This started about 30 minutes ago. Payments are completely broken!"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Sees new feature flag enabled by mistake",
+          "samplePhrasing": "I see ENABLE_NEW_CHECKOUT_FLOW was turned on in prod. That code isn't ready yet! Can you disable the flag ASAP?"
+        }
+      ],
+      "affectedService": "order-processor",
+      "diagnosisCategory": "bad_configuration"
+    },
+    {
+      "scenarioNumber": 14,
+      "scenarioId": "scenario_14_stale_cache",
+      "title": "The \"Stale Cache Apocalypse\" (Cache Flush Required)",
+      "stateId": "state_stale_cache_critical",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "The product-catalog-service cache has stale pricing data showing old Black Friday prices (50% off) that ended 6 hours ago. The database has correct prices, but Redis cache entries have no TTL and won't expire. Thousands of orders are being placed at incorrect prices, causing massive revenue loss. Cache needs to be flushed."
+      },
+      "technicalSpecs": {
+        "rootCause": "Stale Cache with No TTL in redis-cache (used by product-catalog-service)",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Identified stale pricing data in Redis cache with no TTL. Restarting product-catalog won't clear Redis. Requires cache flush. Escalating to Platform Infrastructure.\")",
+        "antiPatterns": [
+          "service-restart(\"product-catalog-service\") (Doesn't clear external Redis cache)",
+          "ticket-resolve (Problem still exists; revenue loss continuing)"
+        ],
+        "correctAssignmentGroup": "Platform_Infrastructure"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "Product prices in checkout don't match database (DB: $100, Cache: $50)",
+        "secondaryEffects": "Order volume spike (customers buying at wrong prices)",
+        "logEvidence": [
+          "product-catalog-service: INFO [Cache] Cache hit for product_123: price=$50",
+          "product-catalog-service: INFO [Cache] Redis key TTL: -1 (no expiration)"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Revenue anomaly detected",
+          "samplePhrasing": "We're seeing massive order volume but revenue is down 50%. Looks like customers are still seeing Black Friday prices that ended this morning!"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Cache TTL bug identified",
+          "samplePhrasing": "Redis cache has stale pricing with no TTL. Database is correct but cache serving old prices. Need to flush the cache ASAP before we lose more money."
+        }
+      ],
+      "affectedService": "redis-cache",
+      "diagnosisCategory": "stale_data"
+    },
+    {
+      "scenarioNumber": 15,
+      "scenarioId": "scenario_15_missing_env_var",
+      "title": "The \"Missing Environment Variable\" (Inspection Gap)",
+      "stateId": "state_missing_env_var_undiagnosable",
+      "complexity": "High",
+      "category": "Inspection Gap",
+      "situation": {
+        "description": "The payment-processor deployment is missing the STRIPE_API_KEY environment variable. The service starts successfully but all payment requests fail with authentication errors. The agent can see errors in logs but cannot inspect environment variables to confirm the root cause."
+      },
+      "technicalSpecs": {
+        "rootCause": "Missing Environment Variable (STRIPE_API_KEY) in payment-processor",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Payment authentication failures suggest missing or incorrect API credentials. I cannot inspect environment variables to confirm. Escalating to Financial Services.\")",
+        "antiPatterns": [
+          "service-restart (Missing env var persists across restarts)"
+        ],
+        "correctAssignmentGroup": "Financial_Services"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "payment-processor Error Rate = 100%",
+        "secondaryEffects": "N/A",
+        "logEvidence": [
+          "payment-processor: ERROR [Stripe] Authentication failed: API key is required",
+          "payment-processor: FATAL [Config] STRIPE_API_KEY environment variable is not set"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Suspects missing credentials",
+          "samplePhrasing": "Payment processor showing auth errors with Stripe. Looks like API key might be missing or wrong. Can you check the environment config?"
+        }
+      ],
+      "affectedService": "payment-processor",
+      "diagnosisCategory": "missing_environment_variable"
+    },
+    {
+      "scenarioNumber": 16,
+      "scenarioId": "scenario_16_trace_mystery",
+      "title": "The \"Distributed Trace Mystery\" (Inspection Gap)",
+      "stateId": "state_mystery_latency_no_traces",
+      "complexity": "High",
+      "category": "Inspection Gap",
+      "situation": {
+        "description": "The frontend-storefront is experiencing 2-second latency spikes, but all downstream services (auth, catalog, cart) show normal latency (<50ms each). The delay is happening in network hops between services due to a service mesh misconfiguration. Without distributed tracing, the agent cannot pinpoint where time is being lost."
+      },
+      "technicalSpecs": {
+        "rootCause": "Service Mesh Latency (network misconfiguration between pods)",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Frontend latency 2s but all services report normal latency. Suggests network/mesh issue. I lack distributed tracing tools to pinpoint. Escalating to Platform Infrastructure.\")",
+        "antiPatterns": [
+          "service-restart (Won't fix mesh configuration)"
+        ],
+        "correctAssignmentGroup": "Platform_Infrastructure"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "frontend-storefront Latency = 2000ms (but CPU/memory normal)",
+        "secondaryEffects": "All downstream services show <50ms latency individually",
+        "logEvidence": [
+          "frontend-storefront: WARN [HTTP] Request completed in 2100ms (external calls: auth 40ms, catalog 35ms, cart 30ms) - unaccounted time: 1995ms"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Unexplained latency",
+          "samplePhrasing": "Frontend P99 latency spiked to 2 seconds but all backend services look fast. Where is the time going?"
+        }
+      ],
+      "affectedService": "frontend-storefront",
+      "diagnosisCategory": "network_mesh_latency"
+    },
+    {
+      "scenarioNumber": 17,
+      "scenarioId": "scenario_17_runaway_service",
+      "title": "The \"Live Service Stop\" (Lifecycle Management)",
+      "stateId": "state_runaway_service_needs_stop",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "The recommendation-api has a critical bug causing it to corrupt data in inventory-db. The service needs to be completely stopped (not restarted) until the bug is fixed. Restarting would just cause more corruption."
+      },
+      "technicalSpecs": {
+        "rootCause": "Critical Bug in recommendation-api corrupting database",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Recommendation-api corrupting database. Service must be stopped (not restarted) immediately. I lack service power controls. Escalating to Data Science ML team.\")",
+        "antiPatterns": [
+          "service-restart (Would immediately resume corruption)"
+        ],
+        "correctAssignmentGroup": "Data_Science_ML"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "Database corruption events correlating with recommendation-api writes",
+        "secondaryEffects": "N/A",
+        "logEvidence": [
+          "recommendation-api: ERROR [Database] Writing negative inventory values",
+          "inventory-db: ERROR [Integrity] Constraint violation from recommendation service"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Critical bug identified",
+          "samplePhrasing": "CRITICAL: Recommendation service has a bug that's writing garbage to inventory database. We need to STOP it immediately, not restart it. Manual intervention needed."
+        }
+      ],
+      "affectedService": "recommendation-api",
+      "diagnosisCategory": "data_corruption"
+    },
+    {
+      "scenarioNumber": 18,
+      "scenarioId": "scenario_18_hotfix_deploy",
+      "title": "The \"Duplicate Orders\" (Data Corruption from Code Bug)",
+      "stateId": "state_hotfix_deploy_required",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "The order-processor has a race condition bug causing data corruption - every order creates duplicate records in the database, resulting in duplicate charges. This is a code defect that the agent cannot fix."
+      },
+      "technicalSpecs": {
+        "rootCause": "Data corruption from race condition bug in order-processor",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Data corruption confirmed: order-processor duplicating all orders due to race condition bug. Code defect requiring engineering fix. Escalating to Checkout Engineering.\")",
+        "antiPatterns": [
+          "service-revert-deployment (Won't fix the data corruption issue)",
+          "service-restart (Same buggy code; doesn't resolve data corruption)"
+        ],
+        "correctAssignmentGroup": "Checkout_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "Data corruption - duplicate order records causing duplicate charges (100% duplication rate)",
+        "secondaryEffects": "N/A",
+        "logEvidence": [
+          "order-processor: ERROR [OrderService] Duplicate order created: order_id=ord_48294 (count: 2)",
+          "order-processor: ERROR [RaceCondition] Concurrent order creation detected",
+          "order-processor: ERROR [OrderService] Critical bug in order creation logic - all orders duplicating",
+          "order-processor: INFO [Version] Running v6.1.0"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Customer complaints about duplicate charges",
+          "samplePhrasing": "CRITICAL: Customers being charged twice for same order! Every order is creating duplicates. We're getting bombarded with angry calls and chargeback requests."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Identified race condition bug causing data corruption",
+          "samplePhrasing": "Order duplication bug affecting customers. Logs show order duplication bug in v6.1.0. Hotfix v6.1.1-hotfix is available and ready to deploy."
+        }
+      ],
+      "affectedService": "order-processor",
+      "diagnosisCategory": "data_corruption"
+    },
+    {
+      "scenarioNumber": 19,
+      "scenarioId": "scenario_19_alerts_firing",
+      "title": "The \"Proactive Scaling\" (CPU Saturation)",
+      "stateId": "state_cpu_saturation_proactive",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "The cart-service is experiencing sustained traffic growth. CPU has climbed steadily from 55% to 85% over the past 3 hours and the trajectory shows it will reach 100% saturation within 30-45 minutes if traffic continues at current growth rate. Proactive scaling is required to prevent imminent performance degradation."
+      },
+      "technicalSpecs": {
+        "rootCause": "CPU Saturation (Proactive) in cart-service",
+        "serviceAction": "service-scale(\"cart-service\", replicas=6)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Detected CPU approaching saturation from sustained traffic growth. Scaled cart-service to 6 replicas to prevent performance degradation. Monitoring trend.\")",
+        "antiPatterns": [
+          "service-restart (Temporary relief; doesn't address traffic growth)",
+          "ticket-escalate (Agent can fix this immediately; escalation delays resolution)"
+        ],
+        "correctAssignmentGroup": "Frontend_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "cart-service CPU at 85% (steady climb from 55% over 3 hours). Traffic growth rate: +15% per hour (sustained). Projected saturation in 30-45 minutes at current rate",
+        "secondaryEffects": "Request latency starting to climb (P99: 280ms, up from 120ms baseline). No errors yet, but approaching capacity limit",
+        "logEvidence": [
+          "cart-service: WARN [System] CPU trending toward saturation: 85% (3-hour trend from 55%)",
+          "cart-service: INFO [Metrics] Request rate: 1200/min (up from 800/min 3 hours ago)",
+          "cart-service: INFO [HealthCheck] Status: Active (healthy but trending toward capacity)"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Proactive monitoring, catching the trend before it becomes a problem",
+          "samplePhrasing": "I'm seeing cart-service CPU climbing steadily from 55% to 85% over the past 3 hours. Traffic is growing and at this rate we'll hit 100% within the hour. Can we scale proactively before it becomes a problem?"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Observes the growth trend and projects capacity issue",
+          "samplePhrasing": "Cart-service CPU showing sustained upward trend. We're at 85% now, was 55% three hours ago. Traffic growing 15% per hour. Should scale before we hit capacity limit."
+        }
+      ],
+      "affectedService": "cart-service",
+      "diagnosisCategory": "cpu_saturation"
+    },
+    {
+      "scenarioNumber": 20,
+      "scenarioId": "scenario_20_health_check",
+      "title": "The \"Shipping API Crash\" (Service Crash)",
+      "stateId": "state_service_crash_shipping",
+      "complexity": "Medium",
+      "category": "Standard",
+      "situation": {
+        "description": "The shipping-api has crashed. The outage is clearly visible in metrics and logs: requests and CPU have dropped to zero, errors are spiking, and crash logs confirm the process exited unexpectedly. Agent should diagnose the crash and restart the service."
+      },
+      "technicalSpecs": {
+        "rootCause": "Service Crash",
+        "serviceAction": "service-restart(\"shipping-api\")",
+        "ticketOutcome": "ticket-resolve (Summary: \"Confirmed shipping-api crash via metrics (requests/CPU at zero, errors spiked) and crash logs. Restarted service to restore checkout functionality.\")",
+        "antiPatterns": [
+          "ticket-escalate (Crash is fully confirmed in metrics and logs \u2014 no need to escalate)"
+        ]
+      },
+      "observabilitySignals": {
+        "primarySymptom": "Requests and CPU drop to zero at NOW-5m; error count spikes from 0 to 58-61",
+        "secondaryEffects": "ECONNREFUSED errors in order-processor logs; frontend-storefront checkout errors rising",
+        "logEvidence": [
+          "shipping-api: ERROR [App] Unhandled exception in rate calculation worker: NullReferenceException at ShippingRateProvider.cs:142",
+          "shipping-api: FATAL [Process] Unrecoverable error - process exiting with code 1",
+          "order-processor: ERROR [ShippingClient] Connection refused to shipping-api: ECONNREFUSED"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Urgent reports of shipping calculation failures",
+          "samplePhrasing": "Customers can't get shipping quotes! Shipping API appears to be down."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Observes ECONNREFUSED errors in order-processor",
+          "samplePhrasing": "Seeing connection refused errors from order-processor to shipping-api. Can you verify and restart if crashed?"
+        }
+      ],
+      "affectedService": "shipping-api",
+      "diagnosisCategory": "service_crash"
+    },
+    {
+      "scenarioNumber": 21,
+      "scenarioId": "scenario_21_circuit_reset",
+      "title": "The \"Manual Circuit Reset\" (State Management)",
+      "stateId": "state_circuit_breaker_needs_reset",
+      "complexity": "Medium",
+      "category": "Permission Wall",
+      "situation": {
+        "description": "The circuit breaker from order-processor to payment-processor is stuck HALF_OPEN after a brief payment outage. It's only allowing 1% of traffic through for testing. The payment service is fully recovered but the circuit won't automatically close. Needs manual reset."
+      },
+      "technicalSpecs": {
+        "rootCause": "Circuit Breaker Stuck HALF_OPEN in order-processor",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Circuit breaker stuck in HALF_OPEN state. Payment service healthy but only 1% of traffic allowed. I cannot manually reset circuit breaker. Escalating to Checkout Engineering.\")",
+        "antiPatterns": [
+          "service-restart(\"order-processor\") (Would work but causes unnecessary downtime; circuit reset is surgical)"
+        ],
+        "correctAssignmentGroup": "Checkout_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "99% of payment requests rejected by circuit breaker",
+        "secondaryEffects": "N/A",
+        "logEvidence": [
+          "order-processor: WARN [Circuit] Circuit breaker to payment-processor is HALF_OPEN - only allowing 1% test traffic",
+          "payment-processor: INFO [HealthCheck] Status: Active - ready for full traffic"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Circuit breaker inspection",
+          "samplePhrasing": "Circuit breaker to payment service stuck in HALF_OPEN for 10 minutes. Payment service is healthy now. Can you reset the circuit to fully close it?"
+        }
+      ],
+      "affectedService": "order-processor",
+      "diagnosisCategory": "circuit_breaker_state"
+    },
+    {
+      "scenarioNumber": 22,
+      "scenarioId": "scenario_22_invalid_credentials",
+      "title": "The \"Stale Credentials\" (Credential Rotation Gap)",
+      "stateId": "state_invalid_credentials_auth_service",
+      "complexity": "Low",
+      "category": "Security",
+      "situation": {
+        "description": "The service account credentials for auth-core-service were rotated in the secrets store 30 minutes ago but the new credentials were never applied to the running service. Auth-core-service is now failing with 401 Unauthorized errors on all authentication calls."
+      },
+      "technicalSpecs": {
+        "rootCause": "Service account credentials rotated in secrets store but not applied to auth-core-service",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"auth-core-service is throwing 401 errors consistent with stale credentials after rotation. I lack a tool to update credentials. Escalating to Security Engineering.\")",
+        "antiPatterns": [
+          "service-restart (Does not update credentials; service restarts with same stale credentials)"
+        ],
+        "correctAssignmentGroup": "Security_Engineering"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "401 Unauthorized errors in auth-core-service logs starting ~30 minutes ago",
+        "secondaryEffects": "frontend-storefront login failures as upstream auth calls fail",
+        "logEvidence": [
+          "ERROR [Auth] 401 Unauthorized: Authentication failed for service_account=auth-svc-prod. Credential rejected by identity provider."
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Samira Gupta (Security)",
+          "perspective": "Security team aware of rotation",
+          "samplePhrasing": "We rotated the auth-core-service service account credentials earlier today. Looks like the new credentials may not have been applied. Users cannot log in."
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Downstream user reports login broken",
+          "samplePhrasing": "Users cannot log in through the storefront. Frontend seems fine - something upstream must be broken."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Terse technical report",
+          "samplePhrasing": "auth-core-service 401s after credential rotation. Service still using old credentials."
+        }
+      ],
+      "affectedService": "auth-core-service",
+      "diagnosisCategory": "invalid_credentials"
+    },
+    {
+      "scenarioNumber": 23,
+      "scenarioId": "scenario_23_redis_crash",
+      "title": "The \"Redis Memory Leak\" (Database OOM Crash)",
+      "stateId": "scenario_23_redis_crash",
+      "complexity": "Medium",
+      "category": "Database Infrastructure",
+      "situation": {
+        "description": "The redis-cache process has a memory leak that caused it to consume all available memory and be OOMKilled by Kubernetes. The service did not auto-recover (CrashLoopBackOff). Multiple services depending on Redis (product-catalog-service, cart-service) are experiencing failures or severe performance degradation."
+      },
+      "technicalSpecs": {
+        "rootCause": "Memory Leak in redis-cache (OOMKilled)",
+        "serviceAction": "service-restart(\"redis-cache\") (Restart to clear memory and restore service)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Redis cache OOMKilled due to memory leak. Restarted redis-cache service to clear memory. Cache functionality restored.\")",
+        "antiPatterns": [
+          "service-restart(\"product-catalog-service\") (Wrong service; catalog is victim, not cause)",
+          "service-scale(\"product-catalog-service\") (Doesn't fix crashed Redis)"
+        ],
+        "correctAssignmentGroup": "Database_Administration"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "redis-cache Memory climbed to 99% then dropped to 0% (OOMKilled). redis-cache CPU at 0% (process not running). redis-cache status: \"Error\". Connection refused errors from services trying to reach Redis",
+        "secondaryEffects": "product-catalog-service latency spike (9200ms vs normal 15ms) due to cache bypass. cart-service errors (890/min) due to inability to persist sessions. inventory-db request rate 40x normal (direct queries bypassing cache)",
+        "logEvidence": [
+          "redis-cache: WARN [Memory] Memory usage at 99% of max_memory",
+          "redis-cache: ERROR [System] Out of memory - attempting graceful shutdown",
+          "redis-cache: FATAL [System] OOMKilled by Kubernetes",
+          "product-catalog-service: ERROR [Cache] Failed to connect to redis-cache: connection refused",
+          "cart-service: ERROR [Redis] Connection to redis-cache failed: ECONNREFUSED"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Reports slow product pages",
+          "samplePhrasing": "Product pages taking 10+ seconds to load. Normally they're instant. Started 5 minutes ago."
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Reports broken cart functionality",
+          "samplePhrasing": "Cart abandonment spiked to 95%! Items aren't persisting in shopping carts. Revenue-critical issue!"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Identifies the technical issue",
+          "samplePhrasing": "Redis-cache pod was OOMKilled and is in CrashLoopBackOff. Can you restart the redis-cache service?"
+        }
+      ],
+      "affectedService": "redis-cache",
+      "diagnosisCategory": "memory_leak"
+    },
+    {
+      "scenarioNumber": 24,
+      "scenarioId": "scenario_24_database_disk_full",
+      "title": "The \"Database Disk Full\" (Database Storage Exhaustion)",
+      "stateId": "scenario_24_database_disk_full",
+      "complexity": "Medium",
+      "category": "Database Infrastructure",
+      "situation": {
+        "description": "The primary-db disk filled to 98% capacity with verbose debug logs that were never rotated. The database cannot perform write operations, causing order processing and user registration failures across multiple services."
+      },
+      "technicalSpecs": {
+        "rootCause": "Database Disk Full (Diagnostic Logs)",
+        "serviceAction": "service-clear-database-logs(\"primary-db\") (Clear diagnostic logs to free disk space)",
+        "ticketOutcome": "ticket-resolve (Summary: \"Primary-db disk exhaustion from unrotated debug logs. Cleared diagnostic logs, freed 15GB. Write operations restored.\")",
+        "antiPatterns": [
+          "service-restart(\"order-processor\") (Wrong service; doesn't free database disk space)",
+          "service-restart(\"primary-db\") (Doesn't clear disk; just restarts with same full disk)"
+        ],
+        "correctAssignmentGroup": "Database_Administration"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "primary-db disk: 98% (50GB/52GB). primary-db errors spiking (180/min). Write operations failing",
+        "secondaryEffects": "order-processor errors (450/min) - cannot write orders to database. auth-core-service errors (120/min) - cannot write new user registrations. Both services have normal CPU/memory but high timeout errors",
+        "logEvidence": [
+          "primary-db: FATAL [System] Disk at 98% - write operations failing",
+          "primary-db: ERROR [Write] Transaction log write failed: No space left on device",
+          "order-processor: ERROR [Database] Failed to write order to primary-db: disk full",
+          "auth-core-service: ERROR [Database] User registration failed: could not write to primary-db"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Reports checkout failures",
+          "samplePhrasing": "Every customer getting 'Unable to process your order' error. Started 10 minutes ago. Losing thousands per minute!"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Reports registration failures",
+          "samplePhrasing": "New user signups broken with database write errors. This is blocking our Black Friday campaign!"
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Identifies root cause",
+          "samplePhrasing": "Primary-db disk at 98% from debug logs. Can you clear the diagnostic logs? They're safe to delete."
+        }
+      ],
+      "affectedService": "primary-db",
+      "diagnosisCategory": "disk_full"
+    },
+    {
+      "scenarioNumber": 25,
+      "scenarioId": "scenario_25_database_cpu_saturation",
+      "title": "The \"Database CPU Saturation\" (Database Performance Degradation)",
+      "stateId": "scenario_25_database_cpu_saturation",
+      "complexity": "High",
+      "category": "Database Infrastructure",
+      "situation": {
+        "description": "A recent code deployment introduced a query that performs full table scans on a 50-million-row table due to a missing database index. The primary-db CPU is saturated at 95%, and queries that normally take 5ms are now taking 8+ seconds. Multiple services (order-processor, auth-core-service) are timing out waiting for database responses."
+      },
+      "technicalSpecs": {
+        "rootCause": "Database CPU Saturation (Slow Queries / Missing Index)",
+        "serviceAction": null,
+        "ticketOutcome": "ticket-escalate (Summary: \"Primary-db CPU at 95% from slow queries. Missing index causing full table scans. Requires DBA intervention for query optimization.\")",
+        "antiPatterns": [
+          "service-restart(\"order-processor\") (Wrong service; order-processor is healthy, database is slow)",
+          "service-restart(\"primary-db\") (Doesn't fix missing index; just restarts with same slow queries)",
+          "service-scale(\"order-processor\") (Doesn't fix database performance bottleneck)"
+        ],
+        "correctAssignmentGroup": "Database_Administration"
+      },
+      "observabilitySignals": {
+        "primarySymptom": "primary-db CPU: 95%. primary-db query latency: 8000-8500ms (normal: 5ms). primary-db connections near capacity (98/100)",
+        "secondaryEffects": "order-processor latency: 12000ms (normal: 250ms), errors: 220/min. auth-core-service latency: 15000ms (normal: 30ms), errors: 95/min. Both services have normal CPU/memory (not overloaded, just waiting on DB)",
+        "logEvidence": [
+          "primary-db: ERROR [SlowQuery] Query exceeded 1000ms: SELECT * FROM orders WHERE status = 'pending' (8500ms)",
+          "primary-db: ERROR [Performance] Full table scans on orders table - missing index on status column",
+          "order-processor: ERROR [Database] Query timeout: order lookup took 9s",
+          "auth-core-service: ERROR [Auth] Login timeout: database query exceeded 10s"
+        ]
+      },
+      "ticketAngles": [
+        {
+          "persona": "Maria Rodriguez (Support)",
+          "perspective": "Reports checkout timeouts",
+          "samplePhrasing": "Checkout taking 30+ seconds or timing out. Started 10 minutes ago. Customers abandoning carts!"
+        },
+        {
+          "persona": "David Chen (PM)",
+          "perspective": "Reports login slowness",
+          "samplePhrasing": "User logins taking 15-20 seconds when they should be instant. Impacting entire user experience."
+        },
+        {
+          "persona": "Alex Kovalenko (Dev)",
+          "perspective": "Provides technical diagnosis",
+          "samplePhrasing": "Primary-db CPU at 95%. Slow query on orders table doing full table scan. Missing index on (status, created_at). Need DBA to add index."
+        }
+      ],
+      "affectedService": "primary-db",
+      "diagnosisCategory": "cpu_saturation"
+    }
+  ]
+}

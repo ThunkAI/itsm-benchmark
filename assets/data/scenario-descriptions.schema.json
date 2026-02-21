@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ShopFlow Scenario Descriptions Schema",
+  "description": "Schema for benchmark scenario descriptions including situation, technical specs, observability signals, and ticket angles",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Overall title of the scenario set"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the scenario descriptions"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["title", "version"]
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenarioNumber": {
+            "type": "integer",
+            "description": "Sequential scenario number",
+            "minimum": 1
+          },
+          "scenarioId": {
+            "type": "string",
+            "description": "Unique identifier for the scenario (e.g., 'scenario_01_golden_path')",
+            "pattern": "^scenario_[0-9]{2}_[a-z_]+$|^state_[a-z_]+$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable scenario title (e.g., 'The \"Golden Path\" (Clean State)')"
+          },
+          "stateId": {
+            "type": "string",
+            "description": "System state identifier"
+          },
+          "complexity": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High", "High (Stealth)"],
+            "description": "Complexity level of the scenario"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Standard",
+              "Permission Wall",
+              "Database Infrastructure",
+              "Inspection Gap"
+            ],
+            "description": "Scenario category"
+          },
+          "affectedService": {
+            "type": ["string", "null"],
+            "description": "The service with the defect/issue, or null if no specific service (e.g., healthy system)"
+          },
+          "diagnosisCategory": {
+            "type": "string",
+            "description": "The diagnosis category from system_diagnosis (e.g., 'cpu_saturation', 'memory_leak', 'bad_configuration')"
+          },
+          "situation": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Detailed description of the system truth/situation"
+              }
+            },
+            "required": ["description"]
+          },
+          "technicalSpecs": {
+            "type": "object",
+            "properties": {
+              "rootCause": {
+                "type": "string",
+                "description": "Root cause of the issue"
+              },
+              "serviceAction": {
+                "type": ["string", "null"],
+                "description": "The correct service action to fix the issue, or null if agent cannot fix"
+              },
+              "ticketOutcome": {
+                "type": "string",
+                "description": "Expected ticket outcome (e.g., 'ticket-resolve', 'ticket-escalate')"
+              },
+              "antiPatterns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of incorrect approaches that should be avoided"
+              },
+              "correctAssignmentGroup": {
+                "type": "string",
+                "description": "The correct team to handle the issue (for escalations)"
+              }
+            },
+            "required": ["rootCause", "serviceAction", "ticketOutcome", "antiPatterns"]
+          },
+          "observabilitySignals": {
+            "type": "object",
+            "properties": {
+              "primarySymptom": {
+                "type": "string",
+                "description": "Primary observable symptom"
+              },
+              "secondaryEffects": {
+                "type": "string",
+                "description": "Secondary effects or cascading impacts"
+              },
+              "logEvidence": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of log evidence entries"
+              }
+            },
+            "required": ["primarySymptom", "logEvidence"]
+          },
+          "ticketAngles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "persona": {
+                  "type": "string",
+                  "description": "Who is filing the ticket (e.g., 'Sarah Jenkins (Sales)')"
+                },
+                "perspective": {
+                  "type": "string",
+                  "description": "Their perspective or context"
+                },
+                "samplePhrasing": {
+                  "type": "string",
+                  "description": "Example ticket text from this persona"
+                }
+              },
+              "required": ["persona", "samplePhrasing"]
+            },
+            "description": "Example ticket submissions from different personas"
+          }
+        },
+        "required": [
+          "scenarioNumber",
+          "scenarioId",
+          "title",
+          "stateId",
+          "complexity",
+          "category",
+          "situation",
+          "technicalSpecs",
+          "observabilitySignals",
+          "ticketAngles"
+        ]
+      }
+    }
+  },
+  "required": ["metadata", "scenarios"]
+}

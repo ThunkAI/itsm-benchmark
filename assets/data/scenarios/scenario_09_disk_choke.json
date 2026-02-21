@@ -1,0 +1,1139 @@
+{
+  "scenario_id": "scenario_09_disk_choke",
+  "agent_identity": "agent_909",
+  "description": "Disk space exhaustion in order-processor from unrotated debug logs causing write failures and transaction errors. Requires service restart to clear ephemeral storage.",
+  "system_diagnosis": {
+    "affected_service": "order-processor",
+    "diagnosis_category": "disk_full"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9091",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "order-processor",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "URGENT: Orders are failing! Customers getting 'Unable to process your order' error",
+          "description": "We're getting flooded with support tickets - customers can't complete checkout! They're getting a generic 'Unable to process your order. Please try again later' message.\n\nThis started about 20 minutes ago and is affecting ALL orders. Revenue is completely blocked. Please fix ASAP!",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that 'order-processor' is experiencing disk space exhaustion from unrotated logs. The correct technical fix is to restart the service to clear ephemeral storage. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_909",
+            "ticket_number": "INC-9091",
+            "resolution_summary": "Identified disk space exhaustion in order-processor (100% full, 30GB/30GB). Debug logs filled ephemeral storage preventing transaction writes. Restarted service to clear disk and restore order processing capability."
+          }
+        },
+        "root_cause": "Disk Space Exhaustion (order-processor)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9092",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "order-processor",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "order-processor pods showing disk at 100%",
+          "description": "The order-processor pods are showing disk at 100%. Looking at the logs, it's filled with debug logging we enabled last week for that payment flow investigation.\n\n`/var/log/orders/debug.log` is like 28GB. Can you bounce the pods to clear it? We need to fix the log rotation config but that requires a code change.",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the developer's diagnosis of disk space exhaustion. The correct technical fix is to restart the service to clear ephemeral storage. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_909",
+            "ticket_number": "INC-9092",
+            "resolution_summary": "Confirmed disk space exhaustion on order-processor (100% utilization from debug logs). Restarted service to clear ephemeral storage as requested. Disk usage now nominal. Log rotation configuration should be addressed in next deployment."
+          }
+        },
+        "root_cause": "Disk Space Exhaustion (order-processor)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9093",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "order-processor",
+          "caller_id": "david_chen_pm",
+          "short_description": "Checkout conversion rate dropped to zero 25 minutes ago",
+          "description": "Looking at the dashboards, our checkout conversion rate just fell off a cliff at 14:35 UTC. It's currently at 0%.\n\nOrder attempt rate looks normal, so users are clicking through checkout, but no orders are completing. The last successful order was at 14:34 UTC.\n\nCan you investigate what's happening with the order-processor service?",
+          "category": "Performance"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should correlate the conversion drop with disk space exhaustion in order-processor. The correct technical fix is to restart the service. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_909",
+            "ticket_number": "INC-9093",
+            "resolution_summary": "Investigated conversion drop. Root cause identified as disk space exhaustion in order-processor preventing transaction log writes. Restarted service to clear storage. Orders are now completing successfully."
+          }
+        },
+        "root_cause": "Disk Space Exhaustion (order-processor)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9094",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "order-processor",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Order processor disk at 100% - log rotation failed?",
+          "description": "I'm seeing `ENOSPC` (No space left on device) errors in the order-processor logs. The disk usage metric shows 100%.\n\nLooks like the log rotation cron job might have failed. I don't have prod access to restart the pods. Can someone bounce order-processor to flush the ephemeral storage?",
+          "category": "Infrastructure"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the developer's diagnosis of disk exhaustion and restart the service as requested.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_909",
+            "ticket_number": "INC-9094",
+            "resolution_summary": "Confirmed disk space exhaustion (100%) on order-processor. Restarted service to clear ephemeral storage and flush unrotated logs. Disk usage returned to normal."
+          }
+        },
+        "root_cause": "Disk Space Exhaustion (order-processor)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-095",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "primary-db",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Service logs filling disk space rapidly",
+          "description": "Disk space alerts firing. Debug logging appears to be enabled in production causing rapid disk consumption.",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should identify disk full condition on order-processor and restart to clear logs.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Checkout_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_909",
+            "ticket_number": "INC-095",
+            "resolution_summary": "Identified disk space exhaustion on order-processor (100% full from debug logs). Restarted service to clear ephemeral storage. Order processing capability restored."
+          }
+        },
+        "root_cause": "Disk Space Exhaustion (order-processor)",
+        "action_solution": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        },
+        "final_action": {
+          "tool": "service-restart",
+          "args": {
+            "agent_identity": "agent_909",
+            "service_name": "order-processor"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "order-processor",
+        "metric_type": "disk",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 65",
+          "{{NOW-45m}} | 78",
+          "{{NOW-30m}} | 92",
+          "{{NOW-15m}} | 99",
+          "{{NOW}} | 100"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-30m}} | 5",
+          "{{NOW-15m}} | 150",
+          "{{NOW}} | 600"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW-30m}} | 18",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 250",
+          "{{NOW-30m}} | 300",
+          "{{NOW}} | 450"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW}} | 160"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 48"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 60",
+          "{{NOW}} | 62"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 520"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 2",
+          "{{NOW}} | 3"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 80"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 85",
+          "{{NOW}} | 400"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1000",
+          "{{NOW}} | 1100"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 46"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 32"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW}} | 41"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 500",
+          "{{NOW}} | 505"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 35",
+          "{{NOW}} | 36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 800",
+          "{{NOW}} | 850"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 70",
+          "{{NOW}} | 68"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 150",
+          "{{NOW}} | 145"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW}} | 52"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 300",
+          "{{NOW}} | 310"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 12"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 22"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 25",
+          "{{NOW}} | 25"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 400",
+          "{{NOW}} | 420"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 2"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW}} | 200"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 90",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 2"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 100"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 3",
+          "{{NOW}} | 4"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 30"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 200",
+          "{{NOW}} | 205"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 11"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 1",
+          "{{NOW}} | 1"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1000",
+          "{{NOW}} | 1020"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "queue_depth",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 200"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 10"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW}} | 100"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-60m}} INFO [OrderService] Processing order id=ord_48291",
+          "{{NOW-45m}} WARN [FileSystem] Disk usage 78% - approaching threshold",
+          "{{NOW-30m}} WARN [FileSystem] Disk usage 92% - critical threshold",
+          "{{NOW-25m}} ERROR [FileSystem] IOException: No space left on device (write failed: /tmp/orders/tx_47382.log)",
+          "{{NOW-20m}} ERROR [OrderService] Failed to write transaction log: java.io.IOException: No space left on device",
+          "{{NOW-18m}} WARN [Runtime] Unable to write checkpoint file: disk quota exceeded",
+          "{{NOW-15m}} ERROR [Hibernate] Could not write transaction log to /var/log/orders/debug.log",
+          "{{NOW-10m}} ERROR [OrderService] Transaction failed: Unable to persist order state",
+          "{{NOW-05m}} ERROR [HealthCheck] Filesystem check failed: Disk at 100% capacity"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-30m}} INFO [Postgres] Client connected from order-processor",
+          "{{NOW-01m}} INFO [Postgres] Query executed successfully"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-20m}} ERROR [OrderClient] 500 Internal Server Error from order-processor",
+          "{{NOW-10m}} ERROR [Checkout] Order submission failed: Upstream service error",
+          "{{NOW-05m}} ERROR [Checkout] Failed to complete purchase for user_id=98271"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active",
+          "{{NOW-01m}} INFO [Auth] Token validated for user_id=12345"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} INFO [Catalog] Retrieved SKU-991 from Cache",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-10m}} INFO [Model] Batch inference completed",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Session] Cart updated for session_id=772",
+          "{{NOW-01m}} INFO [HealthCheck] Redis connection healthy"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-30m}} INFO [Gateway] 200 OK received from StripeAPI",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Log rotation complete",
+          "{{NOW-01m}} INFO [Network] Client connection accepted"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-45m}} INFO [Persistence] RDB saved on disk",
+          "{{NOW-01m}} INFO [Stats] Connected clients: 120"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-30m}} INFO [System] Access log rotation",
+          "{{NOW-20m}} WARN [Queue] Order fulfillment queue depth increasing",
+          "{{NOW-01m}} INFO [HealthCheck] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "order-processor",
+        "version": "v6.1.0",
+        "last_deployed": "{{NOW-7d}}",
+        "environment": "Production",
+        "status": "Degraded",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "order-processor",
+        "status": "success",
+        "message": "Service order-processor restart initiated. Ephemeral storage cleared.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+1m}}",
+        "job_id": "restart-job-disk-clear"
+      },
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-x7y8z9w0"
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+5m}}",
+        "job_id": "revert-job-x7y8z9w0"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-x7y8z9w0"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

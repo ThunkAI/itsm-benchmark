@@ -1,0 +1,722 @@
+{
+  "scenario_id": "scenario_05_bad_config",
+  "agent_identity": "agent_606",
+  "description": "Deployment of auth-core-service introduces a bad configuration, causing immediate crash loops and total login failure. Requires deployment revert.",
+  "system_diagnosis": {
+    "affected_service": "auth-core-service",
+    "diagnosis_category": "bad_configuration"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9051",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "auth-core-service",
+          "caller_id": "maria_rodriguez_support",
+          "short_description": "Nobody can log in! We are getting 100 tickets a minute!",
+          "description": "Complete outage on the login page. Users are seeing '503 Service Unavailable' or just a white screen when hitting the 'Sign In' button.\n\nThis started happening about 10-15 minutes ago. It's affecting all regions. Please fix ASAP.",
+          "category": "Availability"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that 'auth-core-service' is in a crash loop following a recent deployment (10 mins ago). The correct technical fix is to revert the deployment. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Identity_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_606",
+            "ticket_number": "INC-9051",
+            "resolution_summary": "Identified bad configuration in recent auth-core-service deployment causing crash loops. Reverted to previous stable version (v5.0.0). Service availability restored."
+          }
+        },
+        "root_cause": "Misconfiguration (auth-core-service)",
+        "action_solution": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        },
+        "final_action": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9052",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "auth-core-service",
+          "caller_id": "samira_gupta_security",
+          "short_description": "Auth service went dark immediately after the 2:00 PM deployment",
+          "description": "I was monitoring the logs during the v5.1.0 rollout at 14:00 UTC. The service went dark immediately after the new pods spun up.\n\nI see `Connection Refused` errors in the logs. Did we push a bad config map?",
+          "category": "Change Management"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the hypothesis that the recent deployment caused the outage. The correct technical fix is to revert the deployment. The correct workflow action is to resolve the ticket.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Identity_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_606",
+            "ticket_number": "INC-9052",
+            "resolution_summary": "Confirmed fatal crash loop in v5.1.0 deployment. Executed revert to restore service stability."
+          }
+        },
+        "root_cause": "Misconfiguration (auth-core-service)",
+        "action_solution": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        },
+        "final_action": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9053",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "auth-core-service",
+          "caller_id": "david_chen_pm",
+          "short_description": "Authentication system down - revenue impact critical",
+          "description": "Our entire login system is down. No users can authenticate, which means no one can make purchases.\n\nThis started around 2:10 PM and is costing us thousands per minute. Emergency escalation needed!",
+          "category": "Business Impact"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify the recent deployment caused a crash loop and revert it to restore service.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Identity_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_606",
+            "ticket_number": "INC-9053",
+            "resolution_summary": "Auth service crash loop caused by v5.1.0-beta deployment with invalid database URL. Reverted to v5.0.0. Authentication services fully restored."
+          }
+        },
+        "root_cause": "Misconfiguration (auth-core-service)",
+        "action_solution": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        },
+        "final_action": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-9054",
+          "table": "incident",
+          "state": "New",
+          "severity": "1",
+          "configuration_item": "auth-core-service",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Auth pods in CrashLoopBackOff after v5.1.0 deployment",
+          "description": "The v5.1.0 deployment is broken. All auth-core-service pods are in CrashLoopBackOff state.\n\nLogs show:\n'FATAL [Startup] Cannot connect to jdbc:postgresql://invalid-url:5432'\n\nLooks like the database connection string in the config map is wrong. We need to revert this deployment immediately!",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should identify crash loop from bad config and revert deployment to restore service.",
+        "verification_outcome": {
+          "severity_check": "1",
+          "scope_check": "accept",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Identity_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-resolve",
+          "args": {
+            "agent_identity": "agent_606",
+            "ticket_number": "INC-9054",
+            "resolution_summary": "Identified v5.1.0 deployment with invalid database connection string causing immediate crash loop. Reverted to v5.0.0 to restore auth service availability."
+          }
+        },
+        "root_cause": "Misconfiguration (auth-core-service)",
+        "action_solution": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        },
+        "final_action": {
+          "tool": "service-revert-deployment",
+          "args": {
+            "agent_identity": "agent_606",
+            "service_name": "auth-core-service"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "availability",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 100",
+          "{{NOW-15m}} | 100",
+          "{{NOW-10m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW-15m}} | 45",
+          "{{NOW-10m}} | 1",
+          "{{NOW-08m}} | 60",
+          "{{NOW-07m}} | 1",
+          "{{NOW}} | 1"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-15m}} | 0",
+          "{{NOW-10m}} | 50",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 800",
+          "{{NOW-15m}} | 820",
+          "{{NOW-10m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW-10m}} | 200",
+          "{{NOW}} | 500"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 1200",
+          "{{NOW}} | 1100"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 70",
+          "{{NOW}} | 70"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 10"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 30"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "connections",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 50",
+          "{{NOW}} | 50"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 10"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-12m}} INFO [Deployment] Stopping version v5.0.0...",
+          "{{NOW-11m}} INFO [Deployment] Starting version v5.1.0-beta",
+          "{{NOW-10m}} FATAL [Startup] Cannot connect to jdbc:postgresql://invalid-url:5432 (Connection Refused)",
+          "{{NOW-10m}} INFO [System] Pod auth-core-service-99a terminated (Error)",
+          "{{NOW-09m}} INFO [Startup] Starting version v5.1.0-beta",
+          "{{NOW-08m}} FATAL [Startup] Cannot connect to jdbc:postgresql://invalid-url:5432 (Connection Refused)",
+          "{{NOW-08m}} INFO [System] Pod auth-core-service-99b terminated (Error)",
+          "{{NOW-06m}} INFO [System] CrashLoopBackOff detected for auth-core-service"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-09m}} ERROR [AuthClient] Connection refused to auth-core-service",
+          "{{NOW-05m}} ERROR [Login] User login failed: Upstream service unavailable (503)",
+          "{{NOW-01m}} ERROR [Login] User login failed: Upstream service unavailable (503)"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.1.0-beta",
+        "last_deployed": "{{NOW-11m}}",
+        "environment": "Production",
+        "status": "CrashLoopBackOff",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for * - rolling back to previous version v5.0.0",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "revert-job-r8s9t0u1"
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-r8s9t0u1"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-r8s9t0u1"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}

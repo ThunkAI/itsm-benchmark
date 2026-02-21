@@ -1,0 +1,663 @@
+{
+  "scenario_id": "scenario_06_logic_gap",
+  "agent_identity": "agent_707",
+  "description": "System metrics are healthy, but users report stale pricing data. Root cause is missing Redis TTL in application logic. Requires escalation to engineering.",
+  "system_diagnosis": {
+    "affected_service": "product-catalog-service",
+    "diagnosis_category": "stale_cache"
+  },
+  "tickets": [
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1061",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "product-catalog-service",
+          "caller_id": "sarah_jenkins_sales",
+          "short_description": "The website says the iPhone is $500 but the cart says $800!",
+          "description": "I'm on a call with a customer. The product page shows the iPhone 15 at $500 (the Black Friday price), but when they add it to the cart, it changes to $800.\n\nCustomers are angry and accusing us of bait-and-switch. Is the database out of sync?",
+          "category": "Data Integrity"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should identify that the issue is not infrastructure-related (metrics are green). Logs indicate Redis keys have no expiration (TTL: -1), causing stale data to persist. The agent must escalate to the engineering team responsible for the catalog code. Ideal mitigation would be to flush the cache to force fresh data load.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Catalog_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_707",
+            "ticket_number": "INC-1061",
+            "assignment_group": "Catalog_Engineering",
+            "escalation_reason": "Identified stale data in product-catalog-service. Logs show Cache Key TTL is -1 (Infinite), preventing price updates. This is an application logic error requiring a code fix."
+          }
+        },
+        "root_cause": "Application Logic Error (Missing Cache TTL)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-flush-cache",
+          "args": {
+            "agent_identity": "agent_707",
+            "service_name": "product-catalog-service"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1062",
+          "table": "incident",
+          "state": "New",
+          "severity": "3",
+          "configuration_item": "product-catalog-service",
+          "caller_id": "david_chen_pm",
+          "short_description": "Content updates not reflecting on frontend",
+          "description": "I updated the price for SKU-991 and SKU-123 in the CMS over 2 hours ago. The database shows the new values, but the Frontend is still serving the old content.\n\nI thought the cache expires every hour? Please check.",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "The agent should confirm the cache behavior via logs (Infinite TTL). Since this is a code bug, the agent must escalate to the application owners. Ideal mitigation would be to flush the cache to force fresh data load.",
+        "verification_outcome": {
+          "severity_check": "3",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Catalog_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_707",
+            "ticket_number": "INC-1062",
+            "assignment_group": "Catalog_Engineering",
+            "escalation_reason": "Confirmed cache logic error. Logs show keys for SKU-991 and SKU-123 are set with TTL: -1 (No Expiry), ignoring the 1h requirement. Escalating for patch."
+          }
+        },
+        "root_cause": "Application Logic Error (Missing Cache TTL)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-flush-cache",
+          "args": {
+            "agent_identity": "agent_707",
+            "service_name": "product-catalog-service"
+          }
+        }
+      }
+    },
+    {
+      "input_ticket": {
+        "event_type": "ticket_created",
+        "timestamp": "{{NOW}}",
+        "ticket": {
+          "number": "INC-1063",
+          "table": "incident",
+          "state": "New",
+          "severity": "2",
+          "configuration_item": "product-catalog-service",
+          "caller_id": "alex_kovalenko_dev",
+          "short_description": "Cache TTL bug causing stale product data",
+          "description": "I've identified a critical bug in the product-catalog-service caching logic. The Redis keys are being set with TTL: -1 (infinite/no expiry) instead of the configured 1-hour expiration.\n\nThis is causing product data to never refresh from the database. Any price or inventory updates made in the CMS remain stale indefinitely until manual cache flush.\n\nLogs confirm: 'INFO [Cache] Key metadata: TTL: -1 (No Expiry)'\n\nThis is a code-level bug that needs a patch, but in the meantime can you flush the cache to get current prices live?",
+          "category": "Software"
+        }
+      },
+      "ground_truth": {
+        "summary": "Agent should confirm the code bug diagnosis. The cache flush will provide immediate relief but escalation to engineering is needed for permanent fix.",
+        "verification_outcome": {
+          "severity_check": "2",
+          "scope_check": "reject",
+          "incident_check": true,
+          "verifiable": true,
+          "claim_accuracy": "accurate",
+          "requires_clarification": false
+        },
+        "correct_assignment_group": "Catalog_Engineering",
+        "ticket_outcome": {
+          "tool": "ticket-escalate",
+          "args": {
+            "agent_identity": "agent_707",
+            "ticket_number": "INC-1063",
+            "assignment_group": "Catalog_Engineering",
+            "escalation_reason": "Confirmed application logic bug: product-catalog-service setting cache keys with TTL: -1 instead of configured 1h expiration. This causes indefinite stale data. Code fix required. Escalating to Catalog Engineering for patch development."
+          }
+        },
+        "root_cause": "Application Logic Error (Missing Cache TTL)",
+        "action_solution": null,
+        "final_action": {
+          "tool": "service-flush-cache",
+          "args": {
+            "agent_identity": "agent_707",
+            "service_name": "product-catalog-service"
+          }
+        }
+      }
+    }
+  ],
+  "mock_data": {
+    "metrics": [
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 21"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 35",
+          "{{NOW}} | 36"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 14"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "product-catalog-service",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 2000",
+          "{{NOW}} | 2200"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 16"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "latency",
+        "unit": "milliseconds",
+        "values": [
+          "{{NOW-60m}} | 85",
+          "{{NOW}} | 90"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 11"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "memory",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 40",
+          "{{NOW}} | 45"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "metric_type": "requests",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 5000",
+          "{{NOW}} | 5100"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 45",
+          "{{NOW}} | 45"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 70",
+          "{{NOW}} | 70"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 10",
+          "{{NOW}} | 10"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 5",
+          "{{NOW}} | 5"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 8",
+          "{{NOW}} | 8"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "metric_type": "errors",
+        "unit": "count",
+        "values": [
+          "{{NOW-60m}} | 0",
+          "{{NOW}} | 0"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 30",
+          "{{NOW}} | 30"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 20",
+          "{{NOW}} | 20"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "metric_type": "cpu",
+        "unit": "percent",
+        "values": [
+          "{{NOW-60m}} | 15",
+          "{{NOW}} | 15"
+        ]
+      }
+    ],
+    "logs": [
+      {
+        "service_name": "product-catalog-service",
+        "entries": [
+          "{{NOW-20m}} INFO [Cache] Key 'sku-991' found in cache. Serving cached value.",
+          "{{NOW-20m}} INFO [Cache] Key 'sku-991' metadata: TTL: -1 (No Expiry), HitCount: 4500",
+          "{{NOW-15m}} INFO [Catalog] Received price update event for sku-991 (Source: CMS)",
+          "{{NOW-15m}} INFO [Catalog] Database updated successfully.",
+          "{{NOW-10m}} INFO [Cache] Key 'sku-991' found in cache. Serving cached value.",
+          "{{NOW-10m}} INFO [Cache] Key 'sku-991' metadata: TTL: -1 (No Expiry), HitCount: 5200",
+          "{{NOW-05m}} INFO [Cache] Key 'sku-123' found in cache. Serving cached value.",
+          "{{NOW-05m}} INFO [Cache] Key 'sku-123' metadata: TTL: -1 (No Expiry), HitCount: 120"
+        ]
+      },
+      {
+        "service_name": "frontend-storefront",
+        "entries": [
+          "{{NOW-10m}} INFO [PageLoad] PDP rendered for sku-991 in 45ms",
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "cart-service",
+        "entries": [
+          "{{NOW-10m}} INFO [Cart] Item sku-991 added to cart. Re-validating price with DB...",
+          "{{NOW-10m}} WARN [PriceCheck] Price mismatch detected! Catalog Cache: 500, Realtime DB: 800. Adjusting cart total.",
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "auth-core-service",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "recommendation-api",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "order-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "payment-processor",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "shipping-api",
+        "entries": [
+          "{{NOW-05m}} INFO [HealthCheck] Status: Active"
+        ]
+      },
+      {
+        "service_name": "primary-db",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      },
+      {
+        "service_name": "inventory-db",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      },
+      {
+        "service_name": "redis-cache",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      },
+      {
+        "service_name": "rabbitmq",
+        "entries": [
+          "{{NOW-05m}} INFO [System] Status: Active"
+        ]
+      }
+    ],
+    "service_info": [
+      {
+        "service_name": "product-catalog-service",
+        "version": "v3.1.0",
+        "last_deployed": "{{NOW-20d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db",
+          "redis-cache"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "frontend-storefront",
+        "version": "v4.2.0",
+        "last_deployed": "{{NOW-14d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "auth-core-service",
+          "product-catalog-service",
+          "recommendation-api",
+          "cart-service"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "cart-service",
+        "version": "v2.2.1",
+        "last_deployed": "{{NOW-10d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "redis-cache"
+        ],
+        "replica_count": 1
+      },
+      {
+        "service_name": "auth-core-service",
+        "version": "v5.0.0",
+        "last_deployed": "{{NOW-30d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "recommendation-api",
+        "version": "v1.5.0",
+        "last_deployed": "{{NOW-60d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "inventory-db"
+        ],
+        "replica_count": 2
+      },
+      {
+        "service_name": "order-processor",
+        "version": "v6.0.1",
+        "last_deployed": "{{NOW-5d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [
+          "primary-db",
+          "payment-processor",
+          "shipping-api",
+          "rabbitmq"
+        ],
+        "replica_count": 3
+      },
+      {
+        "service_name": "payment-processor",
+        "version": "v1.0.0",
+        "last_deployed": "{{NOW-100d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "shipping-api",
+        "version": "v1.2.0",
+        "last_deployed": "{{NOW-90d}}",
+        "environment": "Production",
+        "status": "Active",
+        "dependencies": [],
+        "replica_count": 2
+      },
+      {
+        "service_name": "primary-db",
+        "version": "PostgreSQL 15",
+        "last_deployed": "{{NOW-365d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "inventory-db",
+        "version": "MongoDB 6.0",
+        "last_deployed": "{{NOW-150d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "redis-cache",
+        "version": "Redis 7.0",
+        "last_deployed": "{{NOW-200d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 1
+      },
+      {
+        "service_name": "rabbitmq",
+        "version": "RabbitMQ 3.11",
+        "last_deployed": "{{NOW-300d}}",
+        "environment": "Production",
+        "status": "Active",
+        "replica_count": 3
+      }
+    ],
+    "revert_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Deployment revert initiated for *",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "revert-job-v2w3x4y5"
+      }
+    ],
+    "restart_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * restart initiated successfully",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+2m}}",
+        "job_id": "restart-job-v2w3x4y5"
+      }
+    ],
+    "scale_responses": [
+      {
+        "service_name": "*",
+        "status": "success",
+        "message": "Service * scaling operation initiated",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+3m}}",
+        "job_id": "scale-job-v2w3x4y5"
+      }
+    ],
+    "database_clear_logs_responses": [
+      {
+        "database_name": "primary-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from primary-db. Freed 2.3 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-primary-db"
+      },
+      {
+        "database_name": "inventory-db",
+        "status": "success",
+        "message": "Diagnostic logs cleared from inventory-db. Freed 1.1 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-inventory-db"
+      },
+      {
+        "database_name": "redis-cache",
+        "status": "success",
+        "message": "Diagnostic logs cleared from redis-cache. Freed 0.5 GB of disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-redis-cache"
+      },
+      {
+        "database_name": "*",
+        "status": "success",
+        "message": "Diagnostic logs cleared from *. Freed disk space.",
+        "initiated_at": "{{NOW}}",
+        "estimated_completion": "{{NOW+30s}}",
+        "job_id": "clear-logs-job-wildcard"
+      }
+    ]
+  }
+}
