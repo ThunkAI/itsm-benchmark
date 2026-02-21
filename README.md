@@ -16,4 +16,4 @@ assets/data
 
 The data folder contains the specification for scenario description files, the scenario descriptions themselves as well as all of the individual scenarios that make up the data set. This includes the mock data required to back the system tools available in the arena.
 
-This folder also contains the ticket_build.json file which is the compelete set of tickets compiled out of the individual scenario files.
+This folder also contains the ticket_build.json file which is the compelete set of tickets compiled out of the individual scenario files, including the ground truth associated with each ticket.
